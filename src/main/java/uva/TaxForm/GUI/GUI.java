@@ -1,22 +1,17 @@
 package uva.TaxForm.GUI;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 public class GUI{
 
@@ -24,7 +19,6 @@ public class GUI{
 	JMenuBar menuBar;
 	JMenu menu;
 	JMenuItem menuItem;
-	JPanel containerPanel;
 	final JFileChooser fc = new JFileChooser();
 	
 	public GUI() {
@@ -77,7 +71,7 @@ public class GUI{
 		});
 	}
 	
-	public void addContainerPanel() {
+	/*public void addContainerPanel() {
 		
 		containerPanel = new JPanel();
 		containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.PAGE_AXIS));
@@ -85,8 +79,8 @@ public class GUI{
 		containerPanel.setBackground(new Color(0, 200, 0));
 		frame.add(containerPanel);
 		
-		/*frame.pack();
-		frame.revalidate();*/
+		frame.pack();
+		frame.revalidate();
 	}
 	
 	public void addQuestion() {
@@ -95,7 +89,7 @@ public class GUI{
 		question.setPreferredSize(new Dimension(frame.getWidth(), 50));
 		containerPanel.add( question );
 
-		/*frame.pack();
-		frame.revalidate();*/
-	}
+		frame.pack();
+		frame.revalidate();
+	}*/
 }

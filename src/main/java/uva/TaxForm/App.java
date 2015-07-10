@@ -3,7 +3,9 @@ package uva.TaxForm;
 import java.io.File;
 import java.net.URL;
 
+import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.GUI.GUI;
+import uva.TaxForm.GUI.GUIVisitor;
 
 public class App {
 	
@@ -21,12 +23,14 @@ public class App {
 		if (internal) {
 			try {
 				TaxForm taxForm = new TaxForm(URL.class.getResource(filePath), internal);
-				taxForm.start();
+				ASTNode root = taxForm.start();
 				
+				//Visit AST and build GUI
 				GUI gui = new GUI();
-				gui.addContainerPanel();
-				gui.addQuestion();
-				gui.addQuestion();
+				
+				GUIVisitor astVisitor = new GUIVisitor(gui);
+				astVisitor.visit(root);
+				
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

@@ -26,8 +26,9 @@ public class Visitor extends TaxFormBaseVisitor<Object> {
 		//System.out.println(ctx.varName().getText());
 		//System.out.println(ctx.varType().getText());
 		ASTQuestion question = AST.newQuestion();
-		question.setLabel(ctx.label().getText());
+		question.setLabel(ctx.label().getText().substring(1, ctx.label().getText().length()-1));
 		question.setName(ctx.varName().getText());
+		question.setType(ctx.varType().getText());
 		question.setParent(form);
 		
 		return question;

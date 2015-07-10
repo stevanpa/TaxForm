@@ -1,6 +1,5 @@
 package uva.TaxForm.GUI;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,14 +17,15 @@ public class GUIQuestion extends JPanel {
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		add( new JLabel(label) );
 		
-		if (type == "boolean") {
+		if (type.equals("boolean")) {
 			checkBox = new JCheckBox("Yes/No");
 			checkBox.setSelected(false);
 			checkBox.setEnabled(true);
 			
 			checkBox.addActionListener( new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.out.println(e.getActionCommand());
+					//System.out.println(e.getActionCommand());
+					System.out.println(checkBox.isSelected());
 				}
 			});
 		}

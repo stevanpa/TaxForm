@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import uva.TaxForm.AST.AST;
 import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.AST.Visitors.Visitor;
+import uva.TaxForm.GUI.GUIVisitor;
 import uva.TaxForm.antlr4.TaxFormLexer;
 import uva.TaxForm.antlr4.TaxFormParser;
 
@@ -28,7 +29,7 @@ public class TaxForm {
     	System.out.println( "filePath: " + filePath );
     }
     
-    public void start() throws Exception {
+    public ASTNode start() throws Exception {
     	
     	ANTLRFileStream input = new ANTLRFileStream(filePath, "UTF-8");
     	
@@ -39,7 +40,10 @@ public class TaxForm {
 		ParseTree tree = parser.form();
 		Visitor visitor = new Visitor();
 		ASTNode root = (ASTNode) visitor.visit(tree);
-
+		
+		return root;
+		
+		
 		//System.out.println(root.getNodeType());
 		
 		
