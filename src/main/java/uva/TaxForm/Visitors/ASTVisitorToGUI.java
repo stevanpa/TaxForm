@@ -1,17 +1,19 @@
-package uva.TaxForm.GUI;
+package uva.TaxForm.Visitors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.AST.ASTQuestion;
+import uva.TaxForm.GUI.GUI;
+import uva.TaxForm.GUI.GUIQuestion;
 
-public class GUIVisitor {
+public class ASTVisitorToGUI {
 
 	private ASTNode ast;
 	private GUI gui;
 	
-	public GUIVisitor(GUI gui) {
+	public ASTVisitorToGUI(GUI gui) {
 		this.gui = gui;
 	}
 	
@@ -25,10 +27,8 @@ public class GUIVisitor {
 				int nodeType = this.ast.get(i).getNodeType();
 				
 				switch ( nodeType ) {
-					case 1: nodeType = ASTNode.FORM;
-						addForm(node);
-					case 2: nodeType = ASTNode.QUESTION;
-						addQuestion(node);
+					case ASTNode.FORM: addForm(node);
+					case ASTNode.QUESTION: addQuestion(node);
 					default: break;
 				}
 				

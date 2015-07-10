@@ -5,7 +5,7 @@ import java.net.URL;
 
 import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.GUI.GUI;
-import uva.TaxForm.GUI.GUIVisitor;
+import uva.TaxForm.Visitors.ASTVisitorToGUI;
 
 public class App {
 	
@@ -28,7 +28,7 @@ public class App {
 				//Visit AST and build GUI
 				GUI gui = new GUI();
 				
-				GUIVisitor astVisitor = new GUIVisitor(gui);
+				ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(gui);
 				astVisitor.visit(root);
 				
 				

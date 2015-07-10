@@ -123,4 +123,5 @@ expression
 	| ADD allMighty										#addExpression
 	| MULTIPLY allMighty								#multiplyExpression
 	| DIVIDE allMighty									#divideExpression
+	| ASSIGN allMighty									#assignExpression
 	;

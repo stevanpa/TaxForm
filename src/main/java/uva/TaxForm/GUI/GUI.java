@@ -15,7 +15,7 @@ import javax.swing.JMenuItem;
 
 public class GUI{
 
-	JFrame frame;
+	public JFrame frame;
 	JMenuBar menuBar;
 	JMenu menu;
 	JMenuItem menuItem;

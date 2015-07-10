@@ -14,4 +14,7 @@ public final class AST {
 		return new ASTQuestion(newAST());
 	}
 	
+	public static ASTIfStatement newIfStatement() {
+		return new ASTIfStatement(newAST());
+	}
 }

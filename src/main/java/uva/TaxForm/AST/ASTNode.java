@@ -7,9 +7,10 @@ public abstract class ASTNode {
 
 	public final static int FORM = 1;
 	public final static int QUESTION = 2;
+	public final static int IF_STATEMENT = 3;
 	
 	final AST ast;
-	int nodeType = 0;
+	private int nodeType = 0;
 	private ASTNode parent = null;
 	private ArrayList<Object> store = new ArrayList<Object>(0);
 	

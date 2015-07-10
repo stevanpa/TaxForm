@@ -8,8 +8,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import uva.TaxForm.AST.AST;
 import uva.TaxForm.AST.ASTNode;
-import uva.TaxForm.AST.Visitors.Visitor;
-import uva.TaxForm.GUI.GUIVisitor;
+import uva.TaxForm.Visitors.ASTVisitorToGUI;
+import uva.TaxForm.Visitors.VisitorToAST;
 import uva.TaxForm.antlr4.TaxFormLexer;
 import uva.TaxForm.antlr4.TaxFormParser;
 
@@ -38,7 +38,7 @@ public class TaxForm {
 		TaxFormParser parser = new TaxFormParser(tokens);
 		
 		ParseTree tree = parser.form();
-		Visitor visitor = new Visitor();
+		VisitorToAST visitor = new VisitorToAST();
 		ASTNode root = (ASTNode) visitor.visit(tree);
 		
 		return root;
