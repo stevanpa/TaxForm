@@ -1,6 +1,6 @@
 package uva.TaxForm.AST;
 
-public abstract class ASTStatement extends ASTNode{
+public class ASTExpression extends ASTNode{
 
 	public final static int SINGLE_EXP 		= 1;
 	public final static int AND_EXP 		= 2;
@@ -18,18 +18,40 @@ public abstract class ASTStatement extends ASTNode{
 	public final static int DIVIDE_EXP 		= 14;
 	public final static int ASSIGN_EXP 		= 15;
 	
-	private int statementType = 0;
+	private int expressionType = 0;
+	private ASTNode leftNode = null;
+	private ASTNode rightNode = null;
 	
-	ASTStatement(AST ast) {
+	ASTExpression(AST ast) {
 		super(ast);
 	}
 
-	public int getStatementType() {
-		return statementType;
+	public int getExpressionType() {
+		return expressionType;
 	}
 
-	public void setStatementType(int statementType) {
-		this.statementType = statementType;
+	public void setExpressionType(int expressionType) {
+		this.expressionType = expressionType;
+	}
+
+	int getNodeType0() {
+		return ASTNode.EXPRESSION;
+	}
+	
+	public ASTNode getLeftNode() {
+		return leftNode;
+	}
+
+	public void setLeftNode(ASTNode leftNode) {
+		this.leftNode = leftNode;
+	}
+
+	public ASTNode getRightNode() {
+		return rightNode;
+	}
+
+	public void setRightNode(ASTNode rightNode) {
+		this.rightNode = rightNode;
 	}
 
 }

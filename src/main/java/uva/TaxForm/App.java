@@ -26,10 +26,10 @@ public class App {
 				ASTNode root = taxForm.start();
 				
 				//Visit AST and build GUI
-				GUI gui = new GUI();
+				/*GUI gui = new GUI();
 				
 				ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(gui);
-				astVisitor.visit(root);
+				astVisitor.visit(root);*/
 				
 				
 			} catch (Exception e) {

@@ -1,18 +1,25 @@
 package uva.TaxForm.AST;
 
-import java.util.ArrayList;
-
 
 public abstract class ASTNode {
 
 	public final static int FORM = 1;
 	public final static int QUESTION = 2;
 	public final static int IF_STATEMENT = 3;
+	public final static int EXPRESSION = 4;
+	public final static int BLOCK = 5;
+	public final static int VARIABLE = 6;
+	public final static int NUMBER = 7;
 	
+	// Variables that apply to all Nodes
 	final AST ast;
 	private int nodeType = 0;
 	private ASTNode parent = null;
-	private ArrayList<Object> store = new ArrayList<Object>(0);
+	
+	// Variables that are optional, dependent on NodeType
+	/*private ASTNode leftNode = null;
+	private ASTNode rightNode = null;
+	private ArrayList<Object> store = new ArrayList<Object>(0);*/
 	
 	ASTNode(AST ast) {
 		if (ast == null) {
@@ -41,7 +48,7 @@ public abstract class ASTNode {
 		this.parent = parent;
 	}
 	
-	public void addChild(ASTNode node) {
+	/*public void addChild(ASTNode node) {
 		this.store.add(node);
 	}
 	
@@ -51,5 +58,21 @@ public abstract class ASTNode {
 	
 	public ASTNode get(int index) {
 		return (ASTNode) this.store.get(index);
+	}*/
+
+	/*public ASTNode getLeftNode() {
+		return leftNode;
 	}
+
+	public void setLeftNode(ASTNode leftNode) {
+		this.leftNode = leftNode;
+	}
+
+	public ASTNode getRightNode() {
+		return rightNode;
+	}
+
+	public void setRightNode(ASTNode rightNode) {
+		this.rightNode = rightNode;
+	}*/
 }

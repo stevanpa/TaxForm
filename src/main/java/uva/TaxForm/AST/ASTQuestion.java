@@ -3,8 +3,7 @@ package uva.TaxForm.AST;
 public class ASTQuestion extends ASTNode {
 
 	private String label;
-	private String name;
-	private String type;
+	private ASTVariable variable;
 	private boolean computed = false;
 	
 	ASTQuestion(AST ast) {
@@ -22,21 +21,13 @@ public class ASTQuestion extends ASTNode {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
+	
 	public String getName() {
-		return name;
+		return this.variable.getName();
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+	
+	public int getType() {
+		return this.variable.getType();
 	}
 
 	public boolean isComputed() {
@@ -45,6 +36,14 @@ public class ASTQuestion extends ASTNode {
 
 	public void setComputed(boolean computed) {
 		this.computed = computed;
+	}
+
+	public ASTNode getVariable() {
+		return variable;
+	}
+
+	public void setVariable(ASTVariable variable) {
+		this.variable = variable;
 	}
 
 }

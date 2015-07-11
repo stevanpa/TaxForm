@@ -55,7 +55,8 @@ NEW_LINE	: '\r'? '\n';
  * 
  * Sequential composition prescribes the order of presentation.
  */
-form : 'form' varName '{' ( question | condition )+ '}' ;
+form : 'form' varName block ;
+block: '{' ( question | condition )+ '}' ;
 
 /* 
  * QL consists of questions grouped in a top-level form construct. 
@@ -76,7 +77,7 @@ varType : ( BOOLEAN | MONEY | INT | STRING ) ;
 
 question : label varName ':' (varType | computed)? ;
 
-computed : varType ASSIGN '(' allMighty+ ')' ;
+computed : varType ASSIGN '(' expression+ ')' ;
 
 /*
  * Conditional structures associate an enabling condition to a question, in which
@@ -90,9 +91,9 @@ computed : varType ASSIGN '(' allMighty+ ')' ;
  * questions at once.
  */
 condition 
-	: 'if' '(' allMighty+ ')' '{' ( question | condition )+ '}'	
+	: 'if' '(' expression+ ')' block	
 		(
-			('else' '{' ( question | condition )+ '}')
+			('else' block)
 			|
 			('else' condition)+
 		)? #ifCondition
@@ -103,25 +104,21 @@ condition
  * > , >= , <= , != and == ) and basic arithmetic ( + , - , * and / ). The required types are:
  * boolean, string, integer, date and decimal and money/currency.
  */
- 
-allMighty
-	: expression
-	;
 	
 expression
 	: varName											#singleExpression
-	| AND allMighty										#andExpression
-	| OR allMighty										#orExpression
-	| NOT allMighty										#notExpression
-	| LOWER allMighty									#lowerExpression
-	| UPPER allMighty									#upperExpression
-	| LOWER_EQUAL allMighty								#lowerEqualExpression
-	| UPPER_EQUAL allMighty								#upperEqualExpression
-	| EQUAL allMighty									#equalExpression
-	| NOT_EQUAL allMighty								#notEqualExpression
-	| MINUS allMighty									#minusExpression
-	| ADD allMighty										#addExpression
-	| MULTIPLY allMighty								#multiplyExpression
-	| DIVIDE allMighty									#divideExpression
-	| ASSIGN allMighty									#assignExpression
+	| AND expression										#andExpression
+	| OR expression										#orExpression
+	| NOT expression										#notExpression
+	| LOWER expression									#lowerExpression
+	| UPPER expression									#upperExpression
+	| LOWER_EQUAL expression								#lowerEqualExpression
+	| UPPER_EQUAL expression								#upperEqualExpression
+	| EQUAL expression									#equalExpression
+	| NOT_EQUAL expression								#notEqualExpression
+	| MINUS expression									#minusExpression
+	| ADD expression										#addExpression
+	| MULTIPLY expression								#multiplyExpression
+	| DIVIDE expression									#divideExpression
+	| ASSIGN expression									#assignExpression
 	;

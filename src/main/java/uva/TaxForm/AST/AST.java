@@ -17,4 +17,20 @@ public final class AST {
 	public static ASTIfStatement newIfStatement() {
 		return new ASTIfStatement(newAST());
 	}
+	
+	public static ASTExpression newExpresion() {
+		return new ASTExpression(newAST());
+	}
+	
+	public static ASTVariable newVariable() {
+		return new ASTVariable(newAST());
+	}
+	
+	public static ASTNumber newNumber() {
+		return new ASTNumber(newAST());
+	}
+	
+	public static ASTBlock newBlock() {
+		return new ASTBlock(newAST());
+	}
 }
