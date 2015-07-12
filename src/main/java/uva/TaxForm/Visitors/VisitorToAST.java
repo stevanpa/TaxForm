@@ -1,5 +1,7 @@
 package uva.TaxForm.Visitors;
 
+import java.util.ArrayList;
+
 import org.antlr.v4.runtime.misc.NotNull;
 
 import uva.TaxForm.AST.AST;
@@ -37,8 +39,13 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 	
 	public ASTNode visitBlock( @NotNull TaxFormParser.BlockContext ctx, ASTNode node ) {
 		
+		//System.out.println(node.getNodeType());
 		ASTBlock block = AST.newBlock();
-		block.setParent(node);
+		if (node.getNodeType() == ASTNode.FORM) {
+			block = (ASTBlock) node;
+		} else {
+			block.setParent(node);
+		}
 		//System.out.println("StartBlockVisit");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			try {
@@ -63,6 +70,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		
 		ASTExpression expression = AST.newExpresion();
 		expression.setParent(question);
+		question.setExpression(expression);
 		
 		ASTVariable variable = AST.newVariable();
 		variable.setParent(expression);
@@ -77,6 +85,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 			expression.setExpressionType(ASTExpression.ASSIGN_EXP);
 			//System.out.println(ctx.expression().size());
 			for (int i=0; i<ctx.expression().size(); i++) {
+				//System.out.println(ctx.expression(i).getText());
 				expression.setRightNode(visitExpression( (ExpressionContext) ctx.expression(i), expression ));
 			}
 		}
@@ -121,20 +130,23 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 	}
 	
 	public ASTNode visitSingleExpression( @NotNull TaxFormParser.SingleExpressionContext ctx, ASTNode node ) {
-		//System.out.println("single " + ctx.getPayload());
-		System.out.println(ctx.getText() + " " + ctx.getChildCount());
-		//System.out.println(ctx.parent.getText());
-		//System.out.println(node.getNodeType());
+		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.VARIABLE);
+		ASTVariable var = null;
 		
-		// Need to find the Variable Node, through its name AND return its reference to it
-		
-		return node;
+		//System.out.println(ctx.getChild(0).getText());
+		for (ASTNode n: nodeList) {
+			ASTVariable tempVar = (ASTVariable) n;
+			
+			if (tempVar.getName().equals(ctx.getChild(0).getText())) {
+				var = tempVar;
+			}
+		}
+		//if (var != null) System.out.println(var.getName());
+		return var;
 	}
 	
 	private ASTNode visitMinusExpression( @NotNull TaxFormParser.MinusExpressionContext ctx, ASTNode node ) {
-		//System.out.println("minus " + ctx.toString());
-		System.out.println(ctx.getText() + " " + ctx.getChildCount());
-		return node;
+		return visitSingleExpression( (SingleExpressionContext) ctx.getChild(ctx.getChildCount()-1), node );
 	}
 	
 	public ASTNode visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTNode node ) {

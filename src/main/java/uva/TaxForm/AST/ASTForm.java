@@ -1,11 +1,8 @@
 package uva.TaxForm.AST;
 
-import java.util.ArrayList;
-
-public class ASTForm extends ASTNode{
+public class ASTForm extends ASTBlock{
 	
 	private String name;
-	private ArrayList<Object> store = new ArrayList<Object>(0);
 	
 	ASTForm(AST ast) {
 		super(ast);
@@ -22,17 +19,4 @@ public class ASTForm extends ASTNode{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public void addChild(ASTNode node) {
-		this.store.add(node);
-	}
-	
-	public int size() {
-		return this.store.size();
-	}
-	
-	public ASTNode get(int index) {
-		return (ASTNode) this.store.get(index);
-	}
-
 }
