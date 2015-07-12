@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uva</groupId>
 	<artifactId>TaxForm</artifactId>
-	<version>0.2</version>
+	<version>0.4</version>
 	<packaging>jar</packaging>
 	
 	<name>TaxForm</name>

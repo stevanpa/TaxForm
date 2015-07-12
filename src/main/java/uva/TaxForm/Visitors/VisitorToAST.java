@@ -37,10 +37,9 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return form;
 	}
 	
-	public ASTNode visitBlock( @NotNull TaxFormParser.BlockContext ctx, ASTNode node ) {
-		
-		//System.out.println(node.getNodeType());
+	public ASTBlock visitBlock( @NotNull TaxFormParser.BlockContext ctx, ASTNode node ) {
 		ASTBlock block = AST.newBlock();
+
 		if (node.getNodeType() == ASTNode.FORM) {
 			block = (ASTBlock) node;
 		} else {
@@ -49,23 +48,22 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		//System.out.println("StartBlockVisit");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			try {
+				block.addChild( visitIfCondition((IfConditionContext) ctx.getChild(i), block) );
+				//System.out.println("Added IfStatement to Block");
+			} catch (ClassCastException e) {}
+			try {
 				block.addChild( visitQuestion((QuestionContext) ctx.getChild(i), block) );
 				//System.out.println("Added Question to Block");
 			} catch (ClassCastException e) {}
-			
-			try {
-				block.addChild( visitIfCondition((IfConditionContext) ctx.getChild(i), block) );
-				//System.out.println("Added IfStatement to Block");
-			} catch (ClassCastException e1) {}
 		}
 		//System.out.println("EndBlockVisit");
 		return block;
 	}
 	
-	public ASTNode visitQuestion( @NotNull TaxFormParser.QuestionContext ctx, ASTNode node ) {
+	public ASTNode visitQuestion( @NotNull TaxFormParser.QuestionContext ctx, ASTBlock block ) {
 		
 		ASTQuestion question = AST.newQuestion();
-		question.setParent(node);
+		question.setParent(block);
 		question.setLabel(ctx.label().getText().substring(1, ctx.label().getText().length()-1));
 		
 		ASTExpression expression = AST.newExpresion();
@@ -108,7 +106,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return variableNode;
 	}
 	
-	public ASTNode visitExpression( @NotNull TaxFormParser.ExpressionContext ctx, ASTNode node ) {
+	public ASTExpression visitExpression( @NotNull TaxFormParser.ExpressionContext ctx, ASTNode node ) {
 		
 		ASTExpression expNode = AST.newExpresion();
 		expNode.setParent(node);
@@ -149,19 +147,26 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return visitSingleExpression( (SingleExpressionContext) ctx.getChild(ctx.getChildCount()-1), node );
 	}
 	
-	public ASTNode visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTNode node ) {
+	public ASTIfStatement visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTNode node ) {
 		ASTIfStatement ifStatement = AST.newIfStatement();
 		ifStatement.setParent(node);
 		//System.out.println("StartVisit IfCondition");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			//System.out.println(ctx.getChild(i).getText());
+			//System.out.println(i);
 			try {
-				ifStatement.setCondition( visitExpression((ExpressionContext) ctx.getChild(i), ifStatement) );
+				ifStatement.setExpression( visitExpression((ExpressionContext) ctx.getChild(i), ifStatement) );
+				System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
-			
+
 			try {
-				visitBlock((BlockContext) ctx.getChild(i), ifStatement);
-			} catch (ClassCastException e1) {}
+				if (ifStatement.getLeftNode() == null) {
+					ifStatement.setLeftNode(visitBlock((BlockContext) ctx.getChild(i), ifStatement));
+				} else {
+					ifStatement.setRightNode(visitBlock((BlockContext) ctx.getChild(i), ifStatement));
+				}
+				System.out.println(ctx.getChild(i).getText());
+			} catch (ClassCastException e) {}
 		}
 		//System.out.println("EndVisit IfCondition");
 		return ifStatement;

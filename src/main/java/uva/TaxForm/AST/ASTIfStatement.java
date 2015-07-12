@@ -2,7 +2,7 @@ package uva.TaxForm.AST;
 
 public class ASTIfStatement extends ASTNode {
 	
-	private ASTNode condition;
+	private ASTExpression expression;
 	private ASTNode leftNode = null;
 	private ASTNode rightNode = null;
 	
@@ -12,14 +12,6 @@ public class ASTIfStatement extends ASTNode {
 
 	int getNodeType0() {
 		return IF_STATEMENT;
-	}
-
-	public ASTNode getCondition() {
-		return condition;
-	}
-
-	public void setCondition(ASTNode node) {
-		this.condition = node;
 	}
 	
 	public ASTNode getLeftNode() {
@@ -36,6 +28,14 @@ public class ASTIfStatement extends ASTNode {
 
 	public void setRightNode(ASTNode rightNode) {
 		this.rightNode = rightNode;
+	}
+
+	public ASTExpression getExpression() {
+		return expression;
+	}
+
+	public void setExpression(ASTExpression expression) {
+		this.expression = expression;
 	}
 
 }
