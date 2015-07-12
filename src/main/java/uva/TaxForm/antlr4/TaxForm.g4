@@ -75,9 +75,10 @@ label : STRING (DIGIT+)? ('?'|':')? ;
 varName : ID ;
 varType : ( BOOLEAN | MONEY | INT | STRING ) ;
 
-question : label varName ':' (varType | computed)? ;
+//question : label varName ':' (varType | computed)? ;
+question : label varName ':' varType (ASSIGN '(' expression+ ')')? ;
 
-computed : varType ASSIGN '(' expression+ ')' ;
+//computed : ASSIGN '(' expression+ ')' ;
 
 /*
  * Conditional structures associate an enabling condition to a question, in which
@@ -107,17 +108,17 @@ condition
 	
 expression
 	: varName											#singleExpression
-	| AND expression										#andExpression
+	| AND expression									#andExpression
 	| OR expression										#orExpression
-	| NOT expression										#notExpression
+	| NOT expression									#notExpression
 	| LOWER expression									#lowerExpression
 	| UPPER expression									#upperExpression
-	| LOWER_EQUAL expression								#lowerEqualExpression
-	| UPPER_EQUAL expression								#upperEqualExpression
+	| LOWER_EQUAL expression							#lowerEqualExpression
+	| UPPER_EQUAL expression							#upperEqualExpression
 	| EQUAL expression									#equalExpression
 	| NOT_EQUAL expression								#notEqualExpression
 	| MINUS expression									#minusExpression
-	| ADD expression										#addExpression
+	| ADD expression									#addExpression
 	| MULTIPLY expression								#multiplyExpression
 	| DIVIDE expression									#divideExpression
 	| ASSIGN expression									#assignExpression
