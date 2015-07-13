@@ -1,12 +1,18 @@
 package uva.TaxForm.Visitors;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
-import javax.swing.BorderFactory;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
+import javax.swing.JTextField;
+
 import uva.TaxForm.AST.ASTBlock;
+import uva.TaxForm.AST.ASTExpression;
 import uva.TaxForm.AST.ASTIfStatement;
 import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.AST.ASTQuestion;
@@ -23,92 +29,168 @@ public class ASTVisitorToGUI {
 	}
 	
 	public void visit(ASTBlock ast) {
+		visit(ast, this.gui.panel);
+	}
+	
+	public void visit(ASTBlock ast, JPanel parentPanel) {
 		
 		if ( ast.size() > 0 ) {
 			for ( int i=0; i<ast.size(); i++ ) {
 				
 				ASTNode node = ast.get(i);
 				int nodeType = node.getNodeType();
-				//System.out.println(nodeType);
 				
 				switch ( nodeType ) {
-					case ASTNode.FORM: 
-						addForm(node);
+					case ASTNode.FORM:
 						break;
 					case ASTNode.QUESTION: 
-						addQuestion(node);
+						parentPanel.add(addQuestion(node));
+						parentPanel.revalidate();
 						break;
 					case ASTNode.IF_STATEMENT: 
-						addIfStatement(node);
+						parentPanel.add(addIfStatement(node));
+						parentPanel.revalidate();
 						break;
 					default: break;
 				}
-				
 			}
 		}
 	}
 
-	private void addIfStatement(ASTNode node) {
-		//ASTNode ifStatement = (ASTNode) node;
+	private JPanel addIfStatement(ASTNode node) {
+		final JPanel panel = addContainerPanel();
 		
-		JPanel containerPanel = new JPanel();
-		containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.PAGE_AXIS));
-		
-		Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-		containerPanel.setBorder(lowerEtched);
-		
-		containerPanel.setName("Sub");
-		
-		System.out.println("if " + node.getNodeType());
 		ASTIfStatement stmnt = (ASTIfStatement) node;
+		ASTExpression exp = (ASTExpression) stmnt.getExpression();
 		ASTNode leftNode = stmnt.getLeftNode();
 		ASTNode rightNode = stmnt.getRightNode();
-		System.out.println("leftNode " + leftNode);
-		System.out.println("rightNode " + rightNode);
 		
 		if (leftNode != null) {
-			System.out.println(leftNode.getNodeType());
-			if (leftNode.getNodeType() == ASTNode.BLOCK) {
-				ASTBlock block = (ASTBlock) leftNode;
-				System.out.println(block.size());
-				visit(block);
-			} else {
-				//visit ifstatement
-			}
+			ASTBlock block = (ASTBlock) leftNode;
+			visit(block, panel);
 		}
 		
 		if (rightNode != null) {
-			
+			ASTBlock block = (ASTBlock) rightNode;
+			visit(block, panel);
 		}
 		
-		containerPanel.revalidate();
+		if (exp != null) {
+			visitExpresion(exp, panel);
+		}
+		
+		return panel;
 	}
 	
-	private void addQuestion(ASTNode node) {
+	private void visitExpresion(ASTExpression exp, final JPanel panel) {
+		// Single expression field
+		if (exp.getExpressionType() == ASTExpression.SINGLE_EXP) {
+			ASTVariable var = (ASTVariable) exp.getLeftNode();
+			
+			if (var.getValue().isEmpty()) {
+				enablePanel(panel, false);
+			}
+			
+			Component c = getComponentByName(this.gui.frame, var.getName());
+			
+			// CheckBox
+			try {
+				final JCheckBox checkBox = (JCheckBox) c;
+				checkBox.addActionListener( new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (checkBox.isSelected()) {
+							enablePanel( panel, true);
+						} else {
+							enablePanel( panel, false);
+							resetPanel(panel);
+						}
+					}
+				});
+			} catch (ClassCastException e) {}
+			
+			// TextField
+			// TODO - Add actionListener to one TextField
+			
+		}
+		// Multiple expression field
+		else {
+			// TODO - Add actionListener to Multiple TextField e.g. calculate the sum of TF1 and TF2 into TF3
+		}
+		
+	}
+	
+	private void resetPanel( Container container ) {
+		Component[] components = container.getComponents();
+		for (Component c : components) {
+			if (c instanceof Container) {
+				resetPanel( (Container) c );
+			}
+			
+			// CheckBox
+			try {
+				JCheckBox checkBox = (JCheckBox) c;
+				checkBox.setSelected(false);
+			} catch (ClassCastException e) {}
+			
+			// TextField
+			// TODO - Reset different types of TextFields e.g. money/string
+			try {
+				JTextField textField = (JTextField) c;
+				textField.setText("0,00");
+			} catch (ClassCastException e) {}
+		}
+	}
+	
+	private Component getComponentByName(Container container, String name) {
+		Component returnComp = null;
+		boolean abort = false;
+		Component[] comps = container.getComponents();
+		
+		for (int i=0; i<comps.length && !abort; i++) {
+			if (name.equals(comps[i].getName())) {
+				returnComp = comps[i];
+				abort = true;
+			} else {
+				Container cont = (Container) comps[i];
+				returnComp = getComponentByName(cont, name);
+				if (returnComp != null) {
+					abort = true;
+				}
+			}
+		}
+		return returnComp;
+	}
+	
+	private void enablePanel( Container container, boolean enable ) {
+		Component[] components = container.getComponents();
+		for (Component c : components) {
+			c.setEnabled(enable);
+			if (c instanceof Container) {
+				enablePanel( (Container) c, enable );
+			}
+		}
+	}
+	
+	private GUIQuestion addQuestion(ASTNode node) {
 		
 		ASTQuestion questionNode = (ASTQuestion) node;
-		JPanel containerPanel = addContainerPanel();
 		
 		String label = questionNode.getLabel();
 		ASTVariable var = (ASTVariable) questionNode.getExpression().getLeftNode();
 		
-		GUIQuestion question = new GUIQuestion(label, var.getType());
-		containerPanel.add( question );
-		containerPanel.revalidate();
+		final GUIQuestion question = new GUIQuestion(label, var);
+		question.setPreferredSize(new Dimension(this.gui.panel.getWidth()-30, 20));
+		
+		return question;
 	}
 	
 	public JPanel addContainerPanel() {
 
 		JPanel containerPanel = new JPanel();
 		containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.PAGE_AXIS));
-		containerPanel.setPreferredSize(new Dimension(this.gui.frame.getWidth() - 30, 20));
-		this.gui.frame.add(containerPanel);
+		//containerPanel.setPreferredSize(new Dimension(this.gui.frame.getWidth() - 30, 20));
+		//this.gui.frame.add(containerPanel);
 		
 		return containerPanel;
-	}
-	
-	private void addForm(ASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 }

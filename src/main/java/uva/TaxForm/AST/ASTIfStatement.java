@@ -2,7 +2,7 @@ package uva.TaxForm.AST;
 
 public class ASTIfStatement extends ASTNode {
 	
-	private ASTExpression expression;
+	private ASTExpression expression = null;
 	private ASTNode leftNode = null;
 	private ASTNode rightNode = null;
 	

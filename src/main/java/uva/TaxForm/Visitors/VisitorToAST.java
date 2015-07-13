@@ -114,6 +114,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 
 		try {
 			expNode.setLeftNode(visitSingleExpression((SingleExpressionContext) ctx, expNode));
+			expNode.setExpressionType(ASTExpression.SINGLE_EXP);
 		} catch (ClassCastException e) {
 			//System.out.println(e.getMessage());
 		}
@@ -156,7 +157,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 			//System.out.println(i);
 			try {
 				ifStatement.setExpression( visitExpression((ExpressionContext) ctx.getChild(i), ifStatement) );
-				System.out.println(ctx.getChild(i).getText());
+				//System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
 
 			try {
@@ -165,7 +166,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 				} else {
 					ifStatement.setRightNode(visitBlock((BlockContext) ctx.getChild(i), ifStatement));
 				}
-				System.out.println(ctx.getChild(i).getText());
+				//System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
 		}
 		//System.out.println("EndVisit IfCondition");
