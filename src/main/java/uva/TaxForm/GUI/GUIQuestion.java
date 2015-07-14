@@ -9,8 +9,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import uva.TaxForm.AST.ASTVariable;
+import uva.TaxForm.GUI.Filters.MoneyTextField;
 
 public class GUIQuestion extends JPanel {
 
@@ -36,18 +36,12 @@ public class GUIQuestion extends JPanel {
 					var.setValue(String.valueOf(checkBox.isSelected()));
 				}
 			});
+			
 			add(this.checkBox);
 		} 
 		else if (var.getType() == ASTVariable.MONEY) {
-			textField = new JTextField("0,00", 6);
-			textField.setName(var.getName());
+			textField = new MoneyTextField(var);
 			
-			textField.addActionListener( new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					//System.out.println(e.getActionCommand());
-					System.out.println(textField.getText());
-				}
-			});
 			add(this.textField);
 		}
 	}

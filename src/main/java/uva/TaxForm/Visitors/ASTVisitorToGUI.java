@@ -136,7 +136,7 @@ public class ASTVisitorToGUI {
 			// TODO - Reset different types of TextFields e.g. money/string
 			try {
 				JTextField textField = (JTextField) c;
-				textField.setText("0,00");
+				textField.setText("0.00");
 			} catch (ClassCastException e) {}
 		}
 	}
