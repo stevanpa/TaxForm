@@ -9,8 +9,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 import uva.TaxForm.AST.ASTVariable;
-import uva.TaxForm.GUI.Filters.MoneyTextField;
 
 public class GUIQuestion extends JPanel {
 
@@ -23,7 +23,6 @@ public class GUIQuestion extends JPanel {
 		//this.setBackground(new Color(0, 150, 0));
 		setLayout(new GridLayout(1,2));
 		add( new JLabel(label) );
-		
 		
 		if (var.getType() == ASTVariable.BOOLEAN) {
 			checkBox = new JCheckBox("Yes/No");
@@ -38,9 +37,9 @@ public class GUIQuestion extends JPanel {
 			});
 			
 			add(this.checkBox);
-		} 
+		}
 		else if (var.getType() == ASTVariable.MONEY) {
-			textField = new MoneyTextField(var);
+			textField = new GUIMoneyTextField(var);
 			
 			add(this.textField);
 		}

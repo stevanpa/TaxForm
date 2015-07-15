@@ -1,4 +1,4 @@
-package uva.TaxForm.GUI.Filters;
+package uva.TaxForm.GUI;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -13,9 +13,9 @@ import javax.swing.text.PlainDocument;
 
 import uva.TaxForm.AST.ASTVariable;
 
-public class MoneyTextField extends JTextField {
+public class GUIMoneyTextField extends JTextField {
 	
-    public MoneyTextField(ASTVariable var) {
+    public GUIMoneyTextField(final ASTVariable var) {
     	super();
     	this.setName(var.getName());
     	this.setText("0.00");
@@ -30,6 +30,11 @@ public class MoneyTextField extends JTextField {
 					}
     			});
     		}
+    		
+    		/*public void focusLost(FocusEvent evt) {
+    			setText(var.getValue());
+    			System.out.println(var.getValue());
+    		}*/
     	});
     }
     

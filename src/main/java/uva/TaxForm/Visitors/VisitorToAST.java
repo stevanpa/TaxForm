@@ -75,6 +75,11 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		variable.setName(ctx.varName().getText());
 		visitVarType( (VarTypeContext) ctx.varType(), variable );
 		
+		/*System.out.println(ctx.getChildCount() + " " + ctx.getText());
+		for (int i=0; i<ctx.getChildCount(); i++) {
+			System.out.println(ctx.getChild(i).getText());
+		}*/
+		
 		expression.setLeftNode(variable);
 		
 		if (ctx.ASSIGN() == null) {
@@ -111,6 +116,10 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		ASTExpression expNode = AST.newExpresion();
 		expNode.setParent(node);
 		//System.out.println(ctx.getChildCount());
+		System.out.println(ctx.getChildCount() + " " + ctx.getText());
+		for (int i=0; i<ctx.getChildCount(); i++) {
+			System.out.println(ctx.getChild(i).getText());
+		}
 
 		try {
 			expNode.setLeftNode(visitSingleExpression((SingleExpressionContext) ctx, expNode));
@@ -151,6 +160,12 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 	public ASTIfStatement visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTNode node ) {
 		ASTIfStatement ifStatement = AST.newIfStatement();
 		ifStatement.setParent(node);
+		
+		/*System.out.println(ctx.getChildCount() + " " + ctx.getText());
+		for (int i=0; i<ctx.getChildCount(); i++) {
+			System.out.println(ctx.getChild(i).getText());
+		}*/
+		
 		//System.out.println("StartVisit IfCondition");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			//System.out.println(ctx.getChild(i).getText());

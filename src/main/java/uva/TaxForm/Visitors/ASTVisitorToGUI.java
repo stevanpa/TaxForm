@@ -84,6 +84,7 @@ public class ASTVisitorToGUI {
 	
 	private void visitExpresion(ASTExpression exp, final JPanel panel) {
 		// Single expression field
+		// Add actionListener to evaluate single condition (TF1)
 		if (exp.getExpressionType() == ASTExpression.SINGLE_EXP) {
 			ASTVariable var = (ASTVariable) exp.getLeftNode();
 			
@@ -109,12 +110,18 @@ public class ASTVisitorToGUI {
 			} catch (ClassCastException e) {}
 			
 			// TextField
-			// TODO - Add actionListener to one TextField
+			// TODO - Add actionListener to one TextField e.g. show hide a part of the form if a condition is met
 			
 		}
-		// Multiple expression field
+		// Evaluate expression field
+		// TODO - Add actionListener to evaluate the condition of (TF1 > TF2) or (!TF1)
+		else if (exp.getExpressionType() == ASTExpression.ASSIGN_EXP) {
+			//ASTVariable leftVar = (ASTVariable) exp.getLeftNode();
+			
+			//Component leftComponent = getComponentByName(this.gui.frame, leftVar.getName());
+			
+		}
 		else {
-			// TODO - Add actionListener to Multiple TextField e.g. calculate the sum of TF1 and TF2 into TF3
 		}
 		
 	}
@@ -181,7 +188,30 @@ public class ASTVisitorToGUI {
 		final GUIQuestion question = new GUIQuestion(label, var);
 		question.setPreferredSize(new Dimension(this.gui.panel.getWidth()-30, 20));
 		
+		if (questionNode.getExpression().getExpressionType() == ASTExpression.ASSIGN_EXP) {
+			// If it's a calculated question we should add some triggers to update the field
+			visitQuestionExpression(questionNode.getExpression());
+		}
+		
 		return question;
+	}
+	
+	private void visitQuestionExpression(ASTExpression exp) {
+		
+		// Calculated expression field
+		// TODO - Add actionListener to Multiple TextField e.g. TF3 = TF1 - TF2
+		ASTVariable resultVar = (ASTVariable) exp.getLeftNode();
+		Component leftNode = getComponentByName(this.gui.frame, resultVar.getName());
+		Component rightNode = null;
+		
+		if (exp.getRightNode().getNodeType() == ASTNode.EXPRESSION) {
+			
+		} 
+		else {
+			
+		}
+		
+		
 	}
 	
 	public JPanel addContainerPanel() {
