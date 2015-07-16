@@ -31,7 +31,7 @@ BOOLEAN
 	| FALSE
 	;
  */
- 
+
 BOOLEAN		: 'boolean' ;
 STRING		: '"' ( '\\"' | '\\\\' | ~["\\] )* '"' ;
 INT			: DIGIT+ ;
@@ -76,7 +76,7 @@ varName : ID ;
 varType : ( BOOLEAN | MONEY | INT | STRING ) ;
 
 //question : label varName ':' (varType | computed)? ;
-question : label varName ':' varType (ASSIGN '(' expression+ ')')? ;
+question : label varName ':' varType (ASSIGN expression+ )? ;
 
 //computed : ASSIGN '(' expression+ ')' ;
 
@@ -92,7 +92,7 @@ question : label varName ':' varType (ASSIGN '(' expression+ ')')? ;
  * questions at once.
  */
 condition 
-	: 'if' '(' expression+ ')' block	
+	: 'if' expression+ block	
 		(
 			('else' block)
 			|
@@ -105,7 +105,19 @@ condition
  * > , >= , <= , != and == ) and basic arithmetic ( + , - , * and / ). The required types are:
  * boolean, string, integer, date and decimal and money/currency.
  */
+ 
+expression 
+	: (DIGIT+ | FLOAT)
+	| varName
+	| '(' expression ')'
+	| expression (MULTIPLY | DIVIDE) expression 
+	| expression (ADD | MINUS) expression 
+	| NOT expression 
+	| expression (AND | OR) expression 
+	| expression (LOWER | UPPER | LOWER_EQUAL | UPPER_EQUAL | NOT_EQUAL) expression 
+	;
 	
+/*
 expression
 	: varName											#singleExpression
 	| AND expression									#andExpression
@@ -123,3 +135,4 @@ expression
 	| DIVIDE expression									#divideExpression
 	| ASSIGN expression									#assignExpression
 	;
+	 */

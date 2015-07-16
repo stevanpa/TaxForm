@@ -17,6 +17,7 @@ public class ASTExpression extends ASTNode{
 	public final static int MULTIPLY_EXP 	= 13;
 	public final static int DIVIDE_EXP 		= 14;
 	public final static int ASSIGN_EXP 		= 15;
+	public final static int EXP		 		= 16;
 	
 	private int expressionType = 0;
 	private ASTNode leftNode = null;

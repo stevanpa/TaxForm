@@ -13,7 +13,7 @@ import uva.TaxForm.AST.ASTQuestion;
 
 public final class VisitAST {
 	
-	static ArrayList<ASTNode> getNodesByType( ASTNode startNode, int nodeType ) {
+	public static ArrayList<ASTNode> getNodesByType( ASTNode startNode, int nodeType ) {
 		ASTForm root = getRootNode(startNode);
 		ArrayList<ASTNode> nodeList = visitBlock(root, nodeType);
 		

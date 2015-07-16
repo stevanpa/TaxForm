@@ -18,7 +18,7 @@ public final class AST {
 		return new ASTIfStatement(newAST());
 	}
 	
-	public static ASTExpression newExpresion() {
+	public static ASTExpression newExpression() {
 		return new ASTExpression(newAST());
 	}
 	

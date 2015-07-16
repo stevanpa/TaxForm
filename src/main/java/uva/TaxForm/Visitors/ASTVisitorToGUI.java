@@ -115,7 +115,7 @@ public class ASTVisitorToGUI {
 		}
 		// Evaluate expression field
 		// TODO - Add actionListener to evaluate the condition of (TF1 > TF2) or (!TF1)
-		else if (exp.getExpressionType() == ASTExpression.ASSIGN_EXP) {
+		else if (exp.getExpressionType() == ASTExpression.EXP) {
 			//ASTVariable leftVar = (ASTVariable) exp.getLeftNode();
 			
 			//Component leftComponent = getComponentByName(this.gui.frame, leftVar.getName());
@@ -188,7 +188,7 @@ public class ASTVisitorToGUI {
 		final GUIQuestion question = new GUIQuestion(label, var);
 		question.setPreferredSize(new Dimension(this.gui.panel.getWidth()-30, 20));
 		
-		if (questionNode.getExpression().getExpressionType() == ASTExpression.ASSIGN_EXP) {
+		if (questionNode.getExpression().getExpressionType() == ASTExpression.EXP) {
 			// If it's a calculated question we should add some triggers to update the field
 			visitQuestionExpression(questionNode.getExpression());
 		}
