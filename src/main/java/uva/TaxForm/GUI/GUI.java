@@ -1,9 +1,13 @@
 package uva.TaxForm.GUI;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
@@ -12,10 +16,12 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 public class GUI{
 
 	public JFrame frame;
+	public JPanel panel;
 	JMenuBar menuBar;
 	JMenu menu;
 	JMenuItem menuItem;
@@ -36,7 +42,15 @@ public class GUI{
 		//set frame position on screen, center
 		frame.setLocationRelativeTo(null);
 		
+		frame.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+				panel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+				panel.revalidate();
+			}
+		});
+		
 		addMenu();
+		addPanel();
 	}
 	
 	private void addMenu() {
@@ -71,25 +85,14 @@ public class GUI{
 		});
 	}
 	
-	/*public void addContainerPanel() {
+	public void addPanel() {
 		
-		containerPanel = new JPanel();
-		containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.PAGE_AXIS));
-		//containerPanel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
-		containerPanel.setBackground(new Color(0, 200, 0));
-		frame.add(containerPanel);
+		panel = new JPanel();
+		panel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+		panel.setBackground(new Color(0, 200, 0));
+		frame.add(panel, BorderLayout.CENTER);
 		
 		frame.pack();
 		frame.revalidate();
 	}
-	
-	public void addQuestion() {
-		
-		GUIQuestion question = new GUIQuestion("test label", "boolean");
-		question.setPreferredSize(new Dimension(frame.getWidth(), 50));
-		containerPanel.add( question );
-
-		frame.pack();
-		frame.revalidate();
-	}*/
 }

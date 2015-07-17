@@ -9,9 +9,9 @@ public class ASTVariable extends ASTNode {
 	public final static int DECIMAL 	= 5;
 	public final static int MONEY 		= 6;
 	
-	private String name;
+	private String name = "";
 	private int type = 0;
-	private String value;
+	private String value = "";
 	
 	ASTVariable(AST ast) {
 		super(ast);

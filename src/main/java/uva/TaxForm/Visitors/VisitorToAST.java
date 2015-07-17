@@ -12,14 +12,14 @@ import uva.TaxForm.AST.ASTIfStatement;
 import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.AST.ASTQuestion;
 import uva.TaxForm.AST.ASTVariable;
+import uva.TaxForm.Utils.ContextUtils;
+import uva.TaxForm.Utils.ShuntingYardAlgorithm;
 import uva.TaxForm.antlr4.TaxFormBaseVisitor;
 import uva.TaxForm.antlr4.TaxFormParser;
 import uva.TaxForm.antlr4.TaxFormParser.BlockContext;
 import uva.TaxForm.antlr4.TaxFormParser.ExpressionContext;
 import uva.TaxForm.antlr4.TaxFormParser.IfConditionContext;
-import uva.TaxForm.antlr4.TaxFormParser.MinusExpressionContext;
 import uva.TaxForm.antlr4.TaxFormParser.QuestionContext;
-import uva.TaxForm.antlr4.TaxFormParser.SingleExpressionContext;
 import uva.TaxForm.antlr4.TaxFormParser.VarTypeContext;
 
 public class VisitorToAST extends TaxFormBaseVisitor<Object> {
@@ -37,22 +37,21 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return form;
 	}
 	
-	public ASTBlock visitBlock( @NotNull TaxFormParser.BlockContext ctx, ASTNode node ) {
-		ASTBlock block = AST.newBlock();
+	public ASTBlock visitBlock( @NotNull TaxFormParser.BlockContext ctx, ASTBlock block ) {
 
-		if (node.getNodeType() == ASTNode.FORM) {
-			block = (ASTBlock) node;
-		} else {
-			block.setParent(node);
-		}
 		//System.out.println("StartBlockVisit");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			try {
-				block.addChild( visitIfCondition((IfConditionContext) ctx.getChild(i), block) );
+				ASTIfStatement ifStatement = AST.newIfStatement();
+				ifStatement.setParent(block);
+				block.addChild(ifStatement);
+				visitIfCondition((IfConditionContext) ctx.getChild(i), ifStatement);
 				//System.out.println("Added IfStatement to Block");
 			} catch (ClassCastException e) {}
 			try {
-				block.addChild( visitQuestion((QuestionContext) ctx.getChild(i), block) );
+				ASTQuestion question = AST.newQuestion();
+				question.setParent(block);
+				block.addChild( visitQuestion((QuestionContext) ctx.getChild(i), question) );
 				//System.out.println("Added Question to Block");
 			} catch (ClassCastException e) {}
 		}
@@ -60,13 +59,11 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return block;
 	}
 	
-	public ASTNode visitQuestion( @NotNull TaxFormParser.QuestionContext ctx, ASTBlock block ) {
+	public ASTNode visitQuestion( @NotNull TaxFormParser.QuestionContext ctx, ASTQuestion question ) {
 		
-		ASTQuestion question = AST.newQuestion();
-		question.setParent(block);
 		question.setLabel(ctx.label().getText().substring(1, ctx.label().getText().length()-1));
 		
-		ASTExpression expression = AST.newExpresion();
+		ASTExpression expression = AST.newExpression();
 		expression.setParent(question);
 		question.setExpression(expression);
 		
@@ -77,15 +74,20 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		
 		expression.setLeftNode(variable);
 		
-		if (ctx.ASSIGN() == null) {
-			expression.setExpressionType(ASTExpression.SINGLE_EXP);
-		} else {
+		if (ctx.ASSIGN() != null) {
+			//expression.setExpressionType(ASTExpression.EXP);
 			expression.setExpressionType(ASTExpression.ASSIGN_EXP);
 			//System.out.println(ctx.expression().size());
 			for (int i=0; i<ctx.expression().size(); i++) {
 				//System.out.println(ctx.expression(i).getText());
-				expression.setRightNode(visitExpression( (ExpressionContext) ctx.expression(i), expression ));
+				ASTExpression rightNodeExp = AST.newExpression();
+				rightNodeExp.setParent(expression);
+				expression.setRightNode(rightNodeExp);
+				visitExpression( (ExpressionContext) ctx.expression(i), rightNodeExp );
 			}
+		}
+		else {
+			expression.setExpressionType(ASTExpression.SINGLE_EXP);
 		}
 		
 		return question;
@@ -106,66 +108,41 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return variableNode;
 	}
 	
-	public ASTExpression visitExpression( @NotNull TaxFormParser.ExpressionContext ctx, ASTNode node ) {
-		
-		ASTExpression expNode = AST.newExpresion();
-		expNode.setParent(node);
-		//System.out.println(ctx.getChildCount());
+	public void visitExpression( @NotNull TaxFormParser.ExpressionContext ctx, ASTExpression exp ) {
 
-		try {
-			expNode.setLeftNode(visitSingleExpression((SingleExpressionContext) ctx, expNode));
-		} catch (ClassCastException e) {
-			//System.out.println(e.getMessage());
-		}
-		try {
-			expNode.setRightNode(visitMinusExpression((MinusExpressionContext) ctx, expNode));
-			expNode.setExpressionType(ASTExpression.MINUS_EXP);
-		} catch (ClassCastException e) {
-			//System.out.println(e.getMessage());
-		}
-
-		return expNode;
-	}
-	
-	public ASTNode visitSingleExpression( @NotNull TaxFormParser.SingleExpressionContext ctx, ASTNode node ) {
-		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.VARIABLE);
-		ASTVariable var = null;
+		ArrayList<Object> infixList = ContextUtils.expressionToInfix(ctx, null);
+		ShuntingYardAlgorithm.infixToAST(infixList, exp);
 		
-		//System.out.println(ctx.getChild(0).getText());
-		for (ASTNode n: nodeList) {
-			ASTVariable tempVar = (ASTVariable) n;
-			
-			if (tempVar.getName().equals(ctx.getChild(0).getText())) {
-				var = tempVar;
-			}
-		}
-		//if (var != null) System.out.println(var.getName());
-		return var;
+		//System.out.println(ShuntingYardAlgorithm.astToPostfix(exp));
 	}
 	
-	private ASTNode visitMinusExpression( @NotNull TaxFormParser.MinusExpressionContext ctx, ASTNode node ) {
-		return visitSingleExpression( (SingleExpressionContext) ctx.getChild(ctx.getChildCount()-1), node );
-	}
-	
-	public ASTIfStatement visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTNode node ) {
-		ASTIfStatement ifStatement = AST.newIfStatement();
-		ifStatement.setParent(node);
+	public ASTIfStatement visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTIfStatement ifStatement ) {
+		
 		//System.out.println("StartVisit IfCondition");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			//System.out.println(ctx.getChild(i).getText());
 			//System.out.println(i);
 			try {
-				ifStatement.setExpression( visitExpression((ExpressionContext) ctx.getChild(i), ifStatement) );
-				System.out.println(ctx.getChild(i).getText());
+				ASTExpression exp = AST.newExpression();
+				exp.setParent(ifStatement);
+				ifStatement.setExpression(exp);
+				visitExpression((ExpressionContext) ctx.getChild(i), exp);
+				//System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
 
 			try {
 				if (ifStatement.getLeftNode() == null) {
-					ifStatement.setLeftNode(visitBlock((BlockContext) ctx.getChild(i), ifStatement));
+					ASTBlock block = AST.newBlock();
+					block.setParent(ifStatement);
+					ifStatement.setLeftNode(block);
+					visitBlock((BlockContext) ctx.getChild(i), block);
 				} else {
-					ifStatement.setRightNode(visitBlock((BlockContext) ctx.getChild(i), ifStatement));
+					ASTBlock block = AST.newBlock();
+					block.setParent(ifStatement);
+					ifStatement.setRightNode(block);
+					visitBlock((BlockContext) ctx.getChild(i), block);
 				}
-				System.out.println(ctx.getChild(i).getText());
+				//System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
 		}
 		//System.out.println("EndVisit IfCondition");
