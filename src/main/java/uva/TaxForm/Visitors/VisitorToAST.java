@@ -72,11 +72,6 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		variable.setName(ctx.varName().getText());
 		visitVarType( (VarTypeContext) ctx.varType(), variable );
 		
-		/*System.out.println(ctx.getChildCount() + " " + ctx.getText());
-		for (int i=0; i<ctx.getChildCount(); i++) {
-			System.out.println(ctx.getChild(i).getText());
-		}*/
-		
 		expression.setLeftNode(variable);
 		
 		if (ctx.ASSIGN() != null) {
@@ -90,6 +85,9 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 				expression.setRightNode(rightNodeExp);
 				visitExpression( (ExpressionContext) ctx.expression(i), rightNodeExp );
 			}
+		}
+		else {
+			expression.setExpressionType(ASTExpression.SINGLE_EXP);
 		}
 		
 		return question;
@@ -110,62 +108,15 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		return variableNode;
 	}
 	
-	public ASTExpression visitExpression( @NotNull TaxFormParser.ExpressionContext ctx, ASTExpression exp ) {
-		
-		/*ASTExpression expNode = AST.newExpresion();
-		expNode.setParent(node);*/
+	public void visitExpression( @NotNull TaxFormParser.ExpressionContext ctx, ASTExpression exp ) {
+
 		ArrayList<Object> infixList = ContextUtils.expressionToInfix(ctx, null);
-
-		// Pass the ArrayList to the ShuntingYardAlgorithm
-		ArrayList<Object> postfixList = ShuntingYardAlgorithm.infixToPostfix(infixList);
+		ShuntingYardAlgorithm.infixToAST(infixList, exp);
 		
-		// Convert the infixList to a ASTExpression tree, and give the tree it's parentNode (expNode)
-		return ContextUtils.postfixToASTExpression(postfixList, exp);
-		
-		
-
-		/*try {
-			expNode.setLeftNode(visitSingleExpression((SingleExpressionContext) ctx, expNode));
-			expNode.setExpressionType(ASTExpression.SINGLE_EXP);
-		} catch (ClassCastException e) {
-			//System.out.println(e.getMessage());
-		}
-		try {
-			expNode.setRightNode(visitMinusExpression((MinusExpressionContext) ctx, expNode));
-			expNode.setExpressionType(ASTExpression.MINUS_EXP);
-		} catch (ClassCastException e) {
-			//System.out.println(e.getMessage());
-		}*/
-
-		//return expNode;
+		//System.out.println(ShuntingYardAlgorithm.astToPostfix(exp));
 	}
 	
-	/*public ASTNode visitSingleExpression( @NotNull TaxFormParser.SingleExpressionContext ctx, ASTNode node ) {
-		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.VARIABLE);
-		ASTVariable var = null;
-		
-		//System.out.println(ctx.getChild(0).getText());
-		for (ASTNode n: nodeList) {
-			ASTVariable tempVar = (ASTVariable) n;
-			
-			if (tempVar.getName().equals(ctx.getChild(0).getText())) {
-				var = tempVar;
-			}
-		}
-		//if (var != null) System.out.println(var.getName());
-		return var;
-	}*/
-	
-	/*private ASTNode visitMinusExpression( @NotNull TaxFormParser.MinusExpressionContext ctx, ASTNode node ) {
-		return visitSingleExpression( (SingleExpressionContext) ctx.getChild(ctx.getChildCount()-1), node );
-	}*/
-	
 	public ASTIfStatement visitIfCondition( @NotNull TaxFormParser.IfConditionContext ctx, ASTIfStatement ifStatement ) {
-		
-		/*System.out.println(ctx.getChildCount() + " " + ctx.getText());
-		for (int i=0; i<ctx.getChildCount(); i++) {
-			System.out.println(ctx.getChild(i).getText());
-		}*/
 		
 		//System.out.println("StartVisit IfCondition");
 		for (int i=0; i<ctx.getChildCount(); i++) {
