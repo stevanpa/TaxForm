@@ -111,6 +111,8 @@ public class ShuntingYardAlgorithm {
 					
 					leftNode.setParent(expression);
 					rightNode.setParent(expression);
+					//System.out.println(expression.getExpressionType());
+					//expression.setExpressionType(expression.getExpressionType());
 					expression.setLeftNode(leftNode);
 					expression.setRightNode(rightNode);
 					

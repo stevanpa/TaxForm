@@ -30,7 +30,8 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			try {
-				visitBlock( (BlockContext) ctx.getChild(i), form );
+				BlockContext blockCTX = (BlockContext) ctx.getChild(i);
+				visitBlock( blockCTX, form );
 			} catch (ClassCastException e) {}
 		}
 		
@@ -42,17 +43,19 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		//System.out.println("StartBlockVisit");
 		for (int i=0; i<ctx.getChildCount(); i++) {
 			try {
+				IfConditionContext ifCTX = (IfConditionContext) ctx.getChild(i);
 				ASTIfStatement ifStatement = AST.newIfStatement();
 				ifStatement.setParent(block);
 				block.addChild(ifStatement);
-				visitIfCondition((IfConditionContext) ctx.getChild(i), ifStatement);
-				//System.out.println("Added IfStatement to Block");
+				
+				visitIfCondition(ifCTX, ifStatement);
 			} catch (ClassCastException e) {}
 			try {
+				QuestionContext questionCTX = (QuestionContext) ctx.getChild(i);
 				ASTQuestion question = AST.newQuestion();
 				question.setParent(block);
-				block.addChild( visitQuestion((QuestionContext) ctx.getChild(i), question) );
-				//System.out.println("Added Question to Block");
+				
+				block.addChild( visitQuestion(questionCTX, question) );
 			} catch (ClassCastException e) {}
 		}
 		//System.out.println("EndBlockVisit");
@@ -123,24 +126,30 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 			//System.out.println(ctx.getChild(i).getText());
 			//System.out.println(i);
 			try {
+				ExpressionContext expressionCTX = (ExpressionContext) ctx.getChild(i);
 				ASTExpression exp = AST.newExpression();
 				exp.setParent(ifStatement);
 				ifStatement.setExpression(exp);
-				visitExpression((ExpressionContext) ctx.getChild(i), exp);
+				
+				visitExpression(expressionCTX, exp);
 				//System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
 
 			try {
 				if (ifStatement.getLeftNode() == null) {
+					BlockContext blockCTX = (BlockContext) ctx.getChild(i);
 					ASTBlock block = AST.newBlock();
 					block.setParent(ifStatement);
 					ifStatement.setLeftNode(block);
-					visitBlock((BlockContext) ctx.getChild(i), block);
+					
+					visitBlock(blockCTX, block);
 				} else {
+					BlockContext blockCTX = (BlockContext) ctx.getChild(i);
 					ASTBlock block = AST.newBlock();
 					block.setParent(ifStatement);
 					ifStatement.setRightNode(block);
-					visitBlock((BlockContext) ctx.getChild(i), block);
+					
+					visitBlock(blockCTX, block);
 				}
 				//System.out.println(ctx.getChild(i).getText());
 			} catch (ClassCastException e) {}
