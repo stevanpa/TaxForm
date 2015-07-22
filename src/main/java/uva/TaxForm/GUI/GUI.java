@@ -10,6 +10,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.MalformedURLException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -17,6 +18,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import uva.TaxForm.TaxForm;
+import uva.TaxForm.AST.ASTForm;
+import uva.TaxForm.Visitors.ASTVisitorToGUI;
 
 public class GUI{
 
@@ -28,6 +35,9 @@ public class GUI{
 	final JFileChooser fc = new JFileChooser();
 	
 	public GUI() {
+		
+		FileFilter ft = new FileNameExtensionFilter("Tax Files", "tax");
+		fc.addChoosableFileFilter(ft);
 		
 		//create frame
 		frame = new JFrame( "TaxForm" );
@@ -51,6 +61,14 @@ public class GUI{
 		
 		addMenu();
 		addPanel();
+	}
+	
+	private GUI resetFrame () {
+		frame.getContentPane().removeAll();
+		addMenu();
+		addPanel();
+		
+		return this;
 	}
 	
 	private void addMenu() {
@@ -77,14 +95,28 @@ public class GUI{
 				
 				if ( returnVal == JFileChooser.APPROVE_OPTION ) {
 					File file = fc.getSelectedFile();
-					System.out.println(file.getName());
+					try {
+						TaxForm taxForm = new TaxForm(file.toURI().toURL(), false);
+						ASTForm root = null;
+						try {
+							root = (ASTForm) taxForm.start();
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(resetFrame());
+						astVisitor.visit(root);
+					} catch (MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} else {
 					System.out.println("Cancelled");
 				}
 			}
 		});
 	}
-	
+
 	public void addPanel() {
 		
 		panel = new JPanel();
