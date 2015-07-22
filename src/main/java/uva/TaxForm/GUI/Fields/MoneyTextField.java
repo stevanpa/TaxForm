@@ -20,8 +20,12 @@ public class MoneyTextField extends JTextField {
     	doc.setDocumentFilter(new MoneyFilter(var, "^[0-9]+[.]?[0-9]{0,2}$"));
     	
     	this.addFocusListener(new FocusAdapter() {
-    		public void focusGained(FocusEvent evt) {
+    		
+    		@Override
+			public void focusGained(FocusEvent evt) {
     			SwingUtilities.invokeLater(new Runnable() {
+    				
+					@Override
 					public void run() {
 						selectAll();
 					}

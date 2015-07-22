@@ -20,8 +20,12 @@ public class IntTextField  extends JTextField {
     	doc.setDocumentFilter(new IntFilter(var, "^[0-9]+$"));
     	
     	this.addFocusListener(new FocusAdapter() {
-    		public void focusGained(FocusEvent evt) {
+    		
+    		@Override
+			public void focusGained(FocusEvent evt) {
     			SwingUtilities.invokeLater(new Runnable() {
+    				
+					@Override
 					public void run() {
 						selectAll();
 					}

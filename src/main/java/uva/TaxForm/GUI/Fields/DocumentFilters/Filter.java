@@ -16,6 +16,7 @@ public abstract class Filter extends DocumentFilter {
 		this.regex = regex;
 	}
 	
+	@Override
 	public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) 
 			throws BadLocationException {
 		
@@ -42,6 +43,7 @@ public abstract class Filter extends DocumentFilter {
 		}
 	}
 
+	@Override
 	public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attr) 
 			throws BadLocationException {
 		
@@ -59,6 +61,7 @@ public abstract class Filter extends DocumentFilter {
 		}
 	}
 	
+	@Override
 	public void remove(FilterBypass fb, int offset, int length)
 			throws BadLocationException {
 		

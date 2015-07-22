@@ -10,6 +10,7 @@ public class ASTIfStatement extends ASTNode {
 		super(ast);
 	}
 
+	@Override
 	int getNodeType0() {
 		return IF_STATEMENT;
 	}

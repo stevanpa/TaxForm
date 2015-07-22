@@ -10,6 +10,7 @@ public class ASTBlock extends ASTNode {
 		super(ast);
 	}
 
+	@Override
 	int getNodeType0() {
 		return ASTNode.BLOCK;
 	}

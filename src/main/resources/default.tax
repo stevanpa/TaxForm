@@ -2,7 +2,7 @@ form taxOfficeExample {
 
 	"What is your age?"
 		age: integer
-	"What your date of Birth?"
+	"What is your date of Birth?"
 		birthDate: date
 	"Did you sell a house in 2010?"
 		hasSoldHouse: boolean

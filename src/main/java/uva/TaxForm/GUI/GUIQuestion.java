@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import uva.TaxForm.AST.ASTVariable;
+import uva.TaxForm.GUI.Fields.DateSpinner;
 import uva.TaxForm.GUI.Fields.IntTextField;
 import uva.TaxForm.GUI.Fields.MoneyTextField;
 
@@ -18,6 +19,7 @@ public class GUIQuestion extends JPanel {
 
 	private JCheckBox checkBox;
 	private JTextField textField;
+	private DateSpinner spinner;
 	
 	public GUIQuestion(String label, final ASTVariable var) {
 		
@@ -33,6 +35,8 @@ public class GUIQuestion extends JPanel {
 			checkBox.setEnabled(true);
 			
 			checkBox.addActionListener( new ActionListener() {
+				
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					var.setValue(String.valueOf(checkBox.isSelected()));
 				}
@@ -49,6 +53,11 @@ public class GUIQuestion extends JPanel {
 			textField = new IntTextField(var);
 			
 			add(this.textField);
+		}
+		else if (var.getType() == ASTVariable.DATE) {
+			spinner = new DateSpinner(var);
+			
+			add(this.spinner);
 		}
 	}
 }
