@@ -8,15 +8,17 @@ form taxOfficeExample {
 		hasMaintLoan: boolean
 	"What was your income in 2010?"
 		income: money
+	"What was your income in 2011?"
+		income: boolean
 	
-	if (hasSoldHouse) {
+	if (hasSoldHouse && hasBoughtHouse) {
 		"What was the selling price?"
 			sellingPrice: money
 		"Private debts for the sold house:"
 			privateDebt: money
 		"Value residue:"
-		valueResidue: money = 
-			(sellingPrice - privateDebt) + 3.00 * income
+			valueResidue: money = 
+				(sellingPrice - privateDebt) + 3 * income
 	}
 	
 	"Did you steal in 2010?"
@@ -27,6 +29,8 @@ form taxOfficeExample {
 			stealingAmount: money
 		"Did you hurt anyone in the process?"
 			hurtAnyone: boolean
+		"Did you get caught?"
+			gotCaught: boolean
 		"Did you get caught?"
 			gotCaught: boolean
 	}

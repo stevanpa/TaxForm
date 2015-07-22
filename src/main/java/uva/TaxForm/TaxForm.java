@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import uva.TaxForm.AST.ASTNode;
+import uva.TaxForm.TypeChecker.TypeChecker;
 import uva.TaxForm.Visitors.VisitorToAST;
 import uva.TaxForm.antlr4.TaxFormLexer;
 import uva.TaxForm.antlr4.TaxFormParser;
@@ -38,6 +39,7 @@ public class TaxForm {
 		ParseTree tree = parser.form();
 		VisitorToAST visitor = new VisitorToAST();
 		ASTNode root = (ASTNode) visitor.visit(tree);
+		TypeChecker.checkAST(root);
 		
 		return root;
 		

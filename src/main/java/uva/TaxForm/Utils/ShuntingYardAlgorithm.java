@@ -97,6 +97,8 @@ public class ShuntingYardAlgorithm {
 				
 				ASTNode node = getNode(postfixStack.pop(), parentNode);
 				
+				//TODO 	What to do when the getNode() method returns null?
+				//		it's a reference to an undefined question
 				if (node.getNodeType() == ASTNode.EXPRESSION) {
 					operatorStack.add(node);
 				}
@@ -136,15 +138,15 @@ public class ShuntingYardAlgorithm {
 		
 		ASTNode node = null;
 		
-		if (item.toString().matches("[a-zA-Z_0-9]+")) {
-			node = getVariableNode(item, parentNode);
-		}
+		if (Pattern.matches("^[0-9]+$", item.toString())) {
+			node = getNumberNode(item);
+		} 
 		else if (Pattern.matches("^[0-9]+[.][0-9]{0,2}$", item.toString())) {
 			node = getNumberNode(item);
 		}
-		else if (Pattern.matches("^[0-9]+$", item.toString())) {
-			node = getNumberNode(item);
-		}
+		else if (item.toString().matches("[a-zA-Z_0-9]+")) {
+			node = getVariableNode(item, parentNode);
+		} 
 		else {
 			node = getExpressionNode(item);
 		}
@@ -245,7 +247,43 @@ public class ShuntingYardAlgorithm {
 		return expr;
 	}
 	
-	public static ArrayList<Object> astToPostfix(ASTExpression exp) {
+	
+	public static ArrayList<ASTNode> astToPostfix(ASTExpression exp) {
+		
+		ArrayList<ASTNode> postfixList = new ArrayList<ASTNode>(0);
+		ASTNode leftNode = exp.getLeftNode();
+		ASTNode rightNode = exp.getRightNode();
+		//System.out.println(exp.getExpressionType());
+		
+		if (exp.getExpressionType() == ASTExpression.SINGLE_EXP) {
+			postfixList.add(leftNode);
+		}
+		else if (leftNode.getNodeType() == ASTNode.EXPRESSION && rightNode.getNodeType() == ASTNode.EXPRESSION) {
+			postfixList.addAll(astToPostfix((ASTExpression) leftNode));
+			postfixList.addAll(astToPostfix((ASTExpression) rightNode));
+			postfixList.add(exp);
+		}
+		else if (leftNode.getNodeType() != ASTNode.EXPRESSION && rightNode.getNodeType() == ASTNode.EXPRESSION) {
+			postfixList.add(leftNode);
+			postfixList.addAll(astToPostfix((ASTExpression) rightNode));
+			postfixList.add(exp);
+		}
+		else if (leftNode.getNodeType() == ASTNode.EXPRESSION && rightNode.getNodeType() != ASTNode.EXPRESSION) {
+			postfixList.addAll(astToPostfix((ASTExpression) leftNode));
+			postfixList.add(rightNode);
+			postfixList.add(exp);
+		}
+		else {
+			postfixList.add(leftNode);
+			postfixList.add(rightNode);
+			postfixList.add(exp);
+		}
+		
+		return postfixList;
+	}
+
+	//TODO - YAGNI?
+	public static ArrayList<Object> astToPostfixString(ASTExpression exp) {
 		
 		ArrayList<Object> postfixList = new ArrayList<Object>(0);
 		ASTNode leftNode = exp.getLeftNode();
@@ -256,17 +294,17 @@ public class ShuntingYardAlgorithm {
 			postfixList.add(getNodeData(leftNode));
 		}
 		else if (leftNode.getNodeType() == ASTNode.EXPRESSION && rightNode.getNodeType() == ASTNode.EXPRESSION) {
-			postfixList.addAll(astToPostfix((ASTExpression) leftNode));
-			postfixList.addAll(astToPostfix((ASTExpression) rightNode));
+			postfixList.addAll(astToPostfixString((ASTExpression) leftNode));
+			postfixList.addAll(astToPostfixString((ASTExpression) rightNode));
 			postfixList.add(getNodeData(exp));
 		}
 		else if (leftNode.getNodeType() != ASTNode.EXPRESSION && rightNode.getNodeType() == ASTNode.EXPRESSION) {
 			postfixList.add(getNodeData(leftNode));
-			postfixList.addAll(astToPostfix((ASTExpression) rightNode));
+			postfixList.addAll(astToPostfixString((ASTExpression) rightNode));
 			postfixList.add(getNodeData(exp));
 		}
 		else if (leftNode.getNodeType() == ASTNode.EXPRESSION && rightNode.getNodeType() != ASTNode.EXPRESSION) {
-			postfixList.addAll(astToPostfix((ASTExpression) leftNode));
+			postfixList.addAll(astToPostfixString((ASTExpression) leftNode));
 			postfixList.add(getNodeData(rightNode));
 			postfixList.add(getNodeData(exp));
 		}
@@ -278,7 +316,8 @@ public class ShuntingYardAlgorithm {
 		
 		return postfixList;
 	}
-
+	
+	//TODO - YAGNI?
 	private static Object getNodeData(ASTNode node) {
 		
 		Object value = null;

@@ -1,9 +1,6 @@
 package uva.TaxForm.Visitors;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import uva.TaxForm.AST.ASTBlock;
 import uva.TaxForm.AST.ASTExpression;
 import uva.TaxForm.AST.ASTForm;
@@ -17,8 +14,9 @@ public final class VisitAST {
 		ASTForm root = getRootNode(startNode);
 		ArrayList<ASTNode> nodeList = visitBlock(root, nodeType);
 		
-		Set<ASTNode> set = new HashSet<ASTNode>(nodeList);
-		nodeList = new ArrayList<ASTNode>(set);
+		// to remove duplicate nodes, but I seem to need them to type check for duplicate questions
+		/*Set<ASTNode> set = new HashSet<ASTNode>(nodeList);
+		nodeList = new ArrayList<ASTNode>(set);*/
 		
 		return nodeList;
 	}
@@ -81,8 +79,13 @@ public final class VisitAST {
 	
 	private static ArrayList<ASTNode> visitQuestion( ASTQuestion node, int nodeType ) {
 		ArrayList<ASTNode> nodeList = new ArrayList<ASTNode>();
-		if(node.getExpression() != null) {
-			nodeList.addAll(visitExpression( node.getExpression(), nodeType ));
+		if (node.getExpression() != null) {
+			if (node.getExpression().getNodeType() == nodeType) {
+				nodeList.add(node.getExpression());
+			}
+			else {
+				nodeList.addAll(visitExpression( node.getExpression(), nodeType ));
+			}
 		}
 		//System.out.println(nodeList.size());
 		return nodeList;

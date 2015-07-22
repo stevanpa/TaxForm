@@ -24,7 +24,7 @@ import uva.TaxForm.antlr4.TaxFormParser.VarTypeContext;
 
 public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 
-	public ASTNode visitForm( @NotNull TaxFormParser.FormContext ctx ) {
+	public ASTForm visitForm( @NotNull TaxFormParser.FormContext ctx ) {
 		ASTForm form = AST.newForm();
 		form.setName(ctx.varName().getText());
 		
