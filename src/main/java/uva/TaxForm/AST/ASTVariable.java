@@ -1,13 +1,8 @@
 package uva.TaxForm.AST;
 
-public class ASTVariable extends ASTNode {
+import uva.TaxForm.Interfaces.IVariable;
 
-	public final static int BOOLEAN 	= 1;
-	public final static int STRING 		= 2;
-	public final static int INT 		= 3;
-	public final static int DATE 		= 4;
-	public final static int DECIMAL 	= 5;
-	public final static int MONEY 		= 6;
+public class ASTVariable extends ASTNode implements IVariable {
 	
 	private String name = "";
 	private int type = 0;

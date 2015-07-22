@@ -1,9 +1,8 @@
 package uva.TaxForm.AST;
 
-public class ASTNumber extends ASTNode {
+import uva.TaxForm.Interfaces.INumber;
 
-	public final static int INT 		= 1;
-	public final static int DOUBLE 		= 2;
+public class ASTNumber extends ASTNode implements INumber {
 	
 	private String value;
 	private int type = 0;

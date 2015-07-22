@@ -15,6 +15,7 @@ public class App {
 		boolean internal = true;
 		TaxForm taxForm = null;
 		ASTForm root = null;
+		GUI gui = new GUI();
 
 		if (args.length == 0) {
 			filePath = "/default.tax";
@@ -42,8 +43,6 @@ public class App {
 		}
 		
 		//Visit AST and build GUI
-		GUI gui = new GUI();
-		
 		ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(gui);
 		astVisitor.visit(root);
 	}

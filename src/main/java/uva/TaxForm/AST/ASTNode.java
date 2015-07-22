@@ -5,11 +5,11 @@ public abstract class ASTNode {
 
 	public final static int FORM = 1;
 	public final static int QUESTION = 2;
-	public final static int IF_STATEMENT = 3;
-	public final static int EXPRESSION = 4;
-	public final static int BLOCK = 5;
-	public final static int VARIABLE = 6;
-	public final static int NUMBER = 7;
+	public final static int EXPRESSION = 3;
+	public final static int BLOCK = 4;
+	public final static int VARIABLE = 5;
+	public final static int NUMBER = 6;
+	public final static int IF_STATEMENT = 7;
 	
 	// Variables that apply to all Nodes
 	final AST ast;
