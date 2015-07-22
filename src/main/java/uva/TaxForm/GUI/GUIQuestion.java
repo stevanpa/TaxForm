@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import uva.TaxForm.AST.ASTVariable;
+import uva.TaxForm.GUI.Fields.IntTextField;
+import uva.TaxForm.GUI.Fields.MoneyTextField;
 
 public class GUIQuestion extends JPanel {
 
@@ -39,7 +41,12 @@ public class GUIQuestion extends JPanel {
 			add(this.checkBox);
 		}
 		else if (var.getType() == ASTVariable.MONEY) {
-			textField = new GUIMoneyTextField(var);
+			textField = new MoneyTextField(var);
+			
+			add(this.textField);
+		}
+		else if (var.getType() == ASTVariable.INT) {
+			textField = new IntTextField(var);
 			
 			add(this.textField);
 		}

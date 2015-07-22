@@ -34,13 +34,14 @@ BOOLEAN
 
 BOOLEAN		: 'boolean' ;
 STRING		: '"' ( '\\"' | '\\\\' | ~["\\] )* '"' ;
-INT			: DIGIT+ ;
+INT			: DIGIT+ | 'integer' ;
 //DATE		:  ;
 FLOAT
 	: DIGIT+ [.,] DIGIT*
 	| DIGIT* [.,] DIGIT+
 	;
 MONEY		: 'money' ;
+DATE		: 'date' ;
 
 ID	: [a-z] [a-zA-Z0-9]* ;
 	
@@ -73,7 +74,7 @@ block: '{' ( question | condition )+ '}' ;
  */
 label : STRING (DIGIT+)? ('?'|':')? ;
 varName : ID ;
-varType : ( BOOLEAN | MONEY | INT | STRING ) ;
+varType : ( BOOLEAN | MONEY | INT | STRING | DATE ) ;
 
 //question : label varName ':' (varType | computed)? ;
 question : label varName ':' varType (ASSIGN expression+ )? ;

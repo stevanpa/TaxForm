@@ -4,14 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -21,9 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import uva.TaxForm.TaxForm;
-import uva.TaxForm.AST.ASTForm;
-import uva.TaxForm.Visitors.ASTVisitorToGUI;
+import uva.TaxForm.GUI.ActionListeners.LoadMenu;
 
 public class GUI{
 
@@ -31,7 +24,7 @@ public class GUI{
 	public JPanel panel;
 	JMenuBar menuBar;
 	JMenu menu;
-	JMenuItem menuItem;
+	JMenuItem menuItemLoad, menuItemSave;
 	final JFileChooser fc = new JFileChooser();
 	
 	public GUI() {
@@ -63,7 +56,7 @@ public class GUI{
 		addPanel();
 	}
 	
-	private GUI resetFrame () {
+	public GUI resetFrame () {
 		frame.getContentPane().removeAll();
 		addMenu();
 		addPanel();
@@ -82,39 +75,20 @@ public class GUI{
 		menuBar.add(menu);
 		
 		//Load File
-		menuItem = new JMenuItem( "Load File" );
-		menuItem.setMnemonic(KeyEvent.VK_L);
-		menuItem.getAccessibleContext().setAccessibleDescription( "Load a new TaxForm file" );
-		menu.add(menuItem);
+		menuItemLoad = new JMenuItem( "Load File" );
+		menuItemLoad.setMnemonic(KeyEvent.VK_L);
+		menuItemLoad.getAccessibleContext().setAccessibleDescription( "Load a new TaxForm file" );
+		menu.add(menuItemLoad);
+		
+		//Save File
+		menuItemSave = new JMenuItem( "Save File" );
+		menuItemSave.setMnemonic(KeyEvent.VK_S);
+		menuItemSave.getAccessibleContext().setAccessibleDescription( "Save TaxForm file" );
+		menu.add(menuItemSave);
 		
 		frame.setJMenuBar(menuBar);
-		
-		menuItem.addActionListener( new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int returnVal = fc.showOpenDialog(frame);
-				
-				if ( returnVal == JFileChooser.APPROVE_OPTION ) {
-					File file = fc.getSelectedFile();
-					try {
-						TaxForm taxForm = new TaxForm(file.toURI().toURL(), false);
-						ASTForm root = null;
-						try {
-							root = (ASTForm) taxForm.start();
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(resetFrame());
-						astVisitor.visit(root);
-					} catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				} else {
-					System.out.println("Cancelled");
-				}
-			}
-		});
+
+		menuItemLoad.addActionListener(new LoadMenu(fc, frame, this));
 	}
 
 	public void addPanel() {
