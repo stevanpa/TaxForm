@@ -1,8 +1,7 @@
 package uva.TaxForm.TypeChecker;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-
+import java.util.HashMap;
 import uva.TaxForm.AST.ASTExpression;
 import uva.TaxForm.AST.ASTIfStatement;
 import uva.TaxForm.AST.ASTNode;
@@ -14,14 +13,16 @@ import uva.TaxForm.Visitors.VisitAST;
 
 public class TypeChecker {
 	
-	public static HashSet<String> checkAST(ASTNode node) {
+	public static HashMap<String, Integer> checkAST(ASTNode node) {
 		
-		HashSet<String> msg = new HashSet<String>(0);
+		HashMap<String, Integer> msg = new HashMap<String, Integer>(0);
 		
 		//checkForUndefinedQuestions(node);
-		msg.addAll(checkForDuplicateQuestions(node));
-		msg.addAll(checkForConditionsNotOfTypeBoolean(node));
-		msg.addAll(checkInvalidOperandToOperator(node));
+		msg.putAll(checkDuplicateQuestions(node));
+		msg.putAll(checkConditionsNotOfTypeBoolean(node));
+		msg.putAll(checkInvalidOperandToOperator(node));
+		msg.putAll(checkCyclicDependencies(node));
+		msg.putAll(checkDuplicateLabels(node));
 		
 		return msg;
 	}
@@ -47,9 +48,9 @@ public class TypeChecker {
 	}
 	
 	// Check for duplicate question declarations with different types
-	public static HashSet<String> checkForDuplicateQuestions(ASTNode node) {
+	public static HashMap<String, Integer> checkDuplicateQuestions(ASTNode node) {
 		
-		HashSet<String> msg = new HashSet<String>(0);
+		HashMap<String, Integer> msg = new HashMap<String, Integer>(0);
 		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.QUESTION);
 		
 		for (int i=0; i<nodeList.size(); i++) {
@@ -61,7 +62,7 @@ public class TypeChecker {
 				ASTVariable dupVar = (ASTVariable) dupQuestion.getExpression().getLeftNode();
 				
 				if (var.getName().equals(dupVar.getName())) {
-					msg.add("Duplicate of variable '" + dupVar.getName() + "' already exisits in form");
+					msg.put("Error: Duplicate of variable '" + dupVar.getName() + "' already exisits in form", -1);
 					//System.out.println("Duplicate: " + dupVar.getName());
 				}
 			}
@@ -71,9 +72,9 @@ public class TypeChecker {
 	}
 	
 	// Check for conditions not of type boolean
-	public static HashSet<String> checkForConditionsNotOfTypeBoolean(ASTNode node) {
+	public static HashMap<String, Integer> checkConditionsNotOfTypeBoolean(ASTNode node) {
 		
-		HashSet<String> msg = new HashSet<String>(0);
+		HashMap<String, Integer> msg = new HashMap<String, Integer>(0);
 		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.IF_STATEMENT);
 		
 		for (int i=0; i<nodeList.size(); i++) {
@@ -88,7 +89,7 @@ public class TypeChecker {
 					System.out.println(condition);*/
 					
 					if (var.getType() != ASTVariable.BOOLEAN) {
-						msg.add("Variable '" + var.getName() + "' is not of type BOOLEAN");
+						msg.put("Error: Variable '" + var.getName() + "' is not of type BOOLEAN", -1);
 						break;
 					}
 				} 
@@ -103,23 +104,23 @@ public class TypeChecker {
 					
 					switch (exp.getExpressionType()) {
 						case ASTExpression.ADD_EXP: 
-							msg.add("Operator of type '+' is not allowed in a conditional expression");
+							msg.put("Error: Operator of type '+' is not allowed in a conditional expression", -1);
 							//System.out.println(condition);
 							break;
 						case ASTExpression.ASSIGN_EXP:
-							msg.add("Operator of type '=' is not allowed in a conditional expression");
+							msg.put("Error: Operator of type '=' is not allowed in a conditional expression", -1);
 							//System.out.println(condition);
 							break;
 						case ASTExpression.DIVIDE_EXP:
-							msg.add("Operator of type '/' is not allowed in a conditional expression");
+							msg.put("Error: Operator of type '/' is not allowed in a conditional expression", -1);
 							//System.out.println(condition);
 							break;
 						case ASTExpression.MINUS_EXP:
-							msg.add("Operator of type '-' is not allowed in a conditional expression");
+							msg.put("Error: Operator of type '-' is not allowed in a conditional expression", -1);
 							//System.out.println(condition);
 							break;
 						case ASTExpression.MULTIPLY_EXP:
-							msg.add("Operator of type '*' is not allowed in a conditional expression");
+							msg.put("Error: Operator of type '*' is not allowed in a conditional expression", -1);
 							//System.out.println(condition);
 							break;
 					}
@@ -134,9 +135,9 @@ public class TypeChecker {
 	}
 	
 	// Check for operands of invalid types to operator e.g. int = int * double
-	public static HashSet<String> checkInvalidOperandToOperator(ASTNode node) {
+	public static HashMap<String, Integer> checkInvalidOperandToOperator(ASTNode node) {
 		
-		HashSet<String> msg = new HashSet<String>(0);
+		HashMap<String, Integer> msg = new HashMap<String, Integer>(0);
 		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.EXPRESSION);
 		
 		for (int i=0; i<nodeList.size(); i++) {
@@ -147,12 +148,18 @@ public class TypeChecker {
 				ArrayList<ASTNode> postfixList = ShuntingYardAlgorithm.astToPostfix(assExpr);
 				ArrayList<Integer> operandTypes = getOperands(postfixList);
 				
-				System.out.println(operandTypes);
-				
+				Integer operandType = operandTypes.get(0);
+				//System.out.println(operandTypes);
+				for (int j=1; j<operandTypes.size(); j++) {
+					if (operandTypes.get(j) != operandType) {
+						//System.out.println("Operands of invalid type to operator in " + ShuntingYardAlgorithm.astToPostfixString(assExpr));
+						msg.put("Error: Operands of invalid type to operator in " + ShuntingYardAlgorithm.astToPostfixString(assExpr), -1);
+						break;
+					}
+				}
 				
 			}
 		}
-		
 		return msg;
 	}
 	
@@ -175,6 +182,37 @@ public class TypeChecker {
 		}
 		
 		return operandTypes;
+	}
+	
+	public static HashMap<String, Integer> checkCyclicDependencies(ASTNode node) {
+		
+		HashMap<String, Integer> msg = new HashMap<String, Integer>(0);
+		
+		
+		
+		return msg;
+	}
+	
+	public static HashMap<String, Integer> checkDuplicateLabels(ASTNode node) {
+		
+		HashMap<String, Integer> msg = new HashMap<String, Integer>(0);
+		ArrayList<ASTNode> nodeList = VisitAST.getNodesByType(node, ASTNode.QUESTION);
+		
+		for (int i=0; i<nodeList.size(); i++) {
+			ASTQuestion question = (ASTQuestion) nodeList.get(i);
+			String label = question.getLabel();
+			
+			for (int j=i+1; j<nodeList.size(); j++) {
+				ASTQuestion dupQuestion = (ASTQuestion) nodeList.get(j);
+				String dupLabel = dupQuestion.getLabel();
+				
+				if (label.equals(dupLabel)) {
+					msg.put("Warning: Duplicate label '" + dupLabel + "'", 0);
+					//System.out.println("Warning: Duplicate label '" + dupLabel + "'");
+				}
+			}
+		}
+		return msg;
 	}
 }
 
