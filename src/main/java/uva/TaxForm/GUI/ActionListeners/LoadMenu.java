@@ -3,8 +3,6 @@ package uva.TaxForm.GUI.ActionListeners;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.MalformedURLException;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
@@ -35,12 +33,7 @@ public class LoadMenu implements ActionListener {
 			TaxForm taxForm = null;
 			ASTVisitorToGUI astVisitor = null;
 			
-			try {
-				taxForm = new TaxForm(file.toURI().toURL(), false);
-			} 
-			catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
+			taxForm = new TaxForm(file.toPath().toString(), false);
 			
 			try {
 				root = (ASTForm) taxForm.start();

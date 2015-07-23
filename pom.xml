@@ -41,7 +41,7 @@
 			<!-- add resources folder to certain location -->
 			<resource>
 				<directory>src/main/resources</directory>
-				<targetPath>${project.build.outputDirectory}</targetPath>
+				<targetPath>${project.build.outputDirectory}/resources</targetPath>
 			</resource>
 		</resources>
 		

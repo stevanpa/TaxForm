@@ -14,6 +14,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -57,8 +58,14 @@ public class GUI{
 			
 			@Override
 			public void componentResized(ComponentEvent e) {
-				panel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
-				panel.revalidate();
+				SwingUtilities.invokeLater(new Runnable() {
+    				
+					@Override
+					public void run() {
+						panel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+						panel.revalidate();
+					}
+    			});
 			}
 		});
 		
