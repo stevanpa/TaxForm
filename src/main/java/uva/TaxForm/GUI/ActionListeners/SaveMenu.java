@@ -8,18 +8,19 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import uva.TaxForm.GUI.GUI;
+import uva.TaxForm.AST.ASTNode;
+import uva.TaxForm.Visitors.ASTVisitorToJSON;
 
 public class SaveMenu implements ActionListener {
 
 	JFileChooser fc;
 	JFrame frame;
-	GUI gui;
+	ASTNode node;
 	
-	public SaveMenu(JFileChooser fc, JFrame frame, GUI gui) {
+	public SaveMenu(JFileChooser fc, JFrame frame, ASTNode node) {
 		this.fc = fc;
 		this.frame = frame;
-		this.gui = gui;
+		this.node = node;
 	}
 	
 	@Override
@@ -27,11 +28,13 @@ public class SaveMenu implements ActionListener {
 		int returnVal = fc.showSaveDialog(frame);
 		
 		if ( returnVal == JFileChooser.APPROVE_OPTION ) {
-			//System.out.println(fc.getSelectedFile() + ".json");
+			String fileName = fc.getSelectedFile().toString();
+			fileName = (fileName.toLowerCase().endsWith(".json"))? fileName : fileName + ".json";
+			ASTVisitorToJSON astToJSON = new ASTVisitorToJSON(node);
 			
 			try {
-				FileWriter fw = new FileWriter(fc.getSelectedFile() + ".json");
-				fw.write("test json stuff");
+				FileWriter fw = new FileWriter(fileName);
+				fw.write(astToJSON.visit());
 				fw.flush();
 				fw.close();
 			} 

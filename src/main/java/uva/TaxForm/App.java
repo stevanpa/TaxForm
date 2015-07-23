@@ -7,7 +7,6 @@ import java.net.URL;
 import uva.TaxForm.AST.ASTForm;
 import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.Visitors.ASTVisitorToGUI;
-import uva.TaxForm.Visitors.ASTVisitorToJSON;
 
 public class App {
 	
@@ -16,7 +15,7 @@ public class App {
 		boolean internal = true;
 		TaxForm taxForm = null;
 		ASTForm root = null;
-		GUI gui = new GUI();
+		GUI gui = null;
 
 		if (args.length == 0) {
 			filePath = "/default.tax";
@@ -44,11 +43,9 @@ public class App {
 		}
 		
 		//Visit AST and build GUI
-		ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(gui);
-		astVisitor.visit(root);
-		
-		ASTVisitorToJSON astToJSON = new ASTVisitorToJSON(root);
-		astToJSON.visit();
+		gui = new GUI(root);
+		ASTVisitorToGUI astToGUI = new ASTVisitorToGUI(gui);
+		astToGUI.visit(root);
 	}
 
 }

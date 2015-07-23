@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import uva.TaxForm.AST.ASTNode;
 import uva.TaxForm.GUI.ActionListeners.LoadMenu;
 import uva.TaxForm.GUI.ActionListeners.SaveMenu;
 
@@ -29,8 +30,10 @@ public class GUI{
 	JMenuItem menuItemLoad, menuItemSave;
 	final JFileChooser fcLoad = new JFileChooser();
 	final JFileChooser fcSave = new JFileChooser();
+	ASTNode node;
 	
-	public GUI() {
+	public GUI(ASTNode node) {
+		this.node = node;
 		
 		FileFilter ftLoad = new FileNameExtensionFilter("Tax Files", "tax");
 		FileFilter ftSave = new FileNameExtensionFilter("Tax File Result", "json");
@@ -96,7 +99,7 @@ public class GUI{
 		frame.setJMenuBar(menuBar);
 
 		menuItemLoad.addActionListener(new LoadMenu(fcLoad, frame, this));
-		menuItemSave.addActionListener(new SaveMenu(fcSave, frame, this));
+		menuItemSave.addActionListener(new SaveMenu(fcSave, frame, node));
 	}
 
 	public void addPanel() {
