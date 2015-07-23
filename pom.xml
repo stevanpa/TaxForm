@@ -24,6 +24,16 @@
 			<artifactId>antlr4-runtime</artifactId>
 			<version>4.5</version>
 		</dependency>
+		<dependency>
+		    <groupId>javax.json</groupId>
+		    <artifactId>javax.json-api</artifactId>
+		    <version>1.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish</groupId>
+		    <artifactId>javax.json</artifactId>
+		    <version>1.0.4</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
@@ -31,7 +41,7 @@
 			<!-- add resources folder to certain location -->
 			<resource>
 				<directory>src/main/resources</directory>
-				<targetPath>${project.build.outputDirectory}</targetPath>
+				<targetPath>${project.build.outputDirectory}/resources</targetPath>
 			</resource>
 		</resources>
 		

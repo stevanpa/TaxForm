@@ -1,9 +1,5 @@
 package uva.TaxForm;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import uva.TaxForm.AST.ASTForm;
 import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.Visitors.ASTVisitorToGUI;
@@ -15,25 +11,16 @@ public class App {
 		boolean internal = true;
 		TaxForm taxForm = null;
 		ASTForm root = null;
-		GUI gui = new GUI();
+		GUI gui = null;
 
 		if (args.length == 0) {
-			filePath = "/default.tax";
+			filePath = "resources/default.tax";
 		} else {
 			filePath = args[0];
 			internal = false;
 		}
 		
-		if (internal) {
-			taxForm = new TaxForm(URL.class.getResource(filePath), internal);
-		} else {
-			try {
-				taxForm = new TaxForm(new File(filePath).toURI().toURL(), internal);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		taxForm = new TaxForm(filePath, internal);
 		
 		try {
 			root = (ASTForm) taxForm.start();
@@ -43,8 +30,9 @@ public class App {
 		}
 		
 		//Visit AST and build GUI
-		ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(gui);
-		astVisitor.visit(root);
+		gui = new GUI(root);
+		ASTVisitorToGUI astToGUI = new ASTVisitorToGUI(gui);
+		astToGUI.visit(root);
 	}
 
 }

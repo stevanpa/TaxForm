@@ -8,6 +8,7 @@ public class ASTForm extends ASTBlock{
 		super(ast);
 	}
 
+	@Override
 	int getNodeType0() {
 		return FORM;
 	}

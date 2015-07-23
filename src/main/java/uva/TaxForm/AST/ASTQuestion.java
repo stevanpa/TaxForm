@@ -10,6 +10,7 @@ public class ASTQuestion extends ASTNode {
 		super(ast);
 	}
 
+	@Override
 	int getNodeType0() {
 		return QUESTION;
 	}

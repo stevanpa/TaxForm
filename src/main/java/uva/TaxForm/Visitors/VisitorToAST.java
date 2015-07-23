@@ -24,6 +24,7 @@ import uva.TaxForm.antlr4.TaxFormParser.VarTypeContext;
 
 public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 
+	@Override
 	public ASTForm visitForm( @NotNull TaxFormParser.FormContext ctx ) {
 		ASTForm form = AST.newForm();
 		form.setName(ctx.varName().getText());
@@ -106,6 +107,8 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 			variableNode.setType(ASTVariable.MONEY);
 		} else if (varType.STRING() != null) {
 			variableNode.setType(ASTVariable.STRING);
+		} else if (varType.DATE() != null) {
+			variableNode.setType(ASTVariable.DATE);
 		}
 		
 		return variableNode;
