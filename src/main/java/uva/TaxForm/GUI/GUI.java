@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -17,6 +18,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import uva.TaxForm.GUI.ActionListeners.LoadMenu;
+import uva.TaxForm.GUI.ActionListeners.SaveMenu;
 
 public class GUI{
 
@@ -25,12 +27,15 @@ public class GUI{
 	JMenuBar menuBar;
 	JMenu menu;
 	JMenuItem menuItemLoad, menuItemSave;
-	final JFileChooser fc = new JFileChooser();
+	final JFileChooser fcLoad = new JFileChooser();
+	final JFileChooser fcSave = new JFileChooser();
 	
 	public GUI() {
 		
-		FileFilter ft = new FileNameExtensionFilter("Tax Files", "tax");
-		fc.addChoosableFileFilter(ft);
+		FileFilter ftLoad = new FileNameExtensionFilter("Tax Files", "tax");
+		FileFilter ftSave = new FileNameExtensionFilter("Tax File Result", "json");
+		fcLoad.setFileFilter(ftLoad);
+		fcSave.setFileFilter(ftSave);
 		
 		//create frame
 		frame = new JFrame( "TaxForm" );
@@ -46,6 +51,8 @@ public class GUI{
 		frame.setLocationRelativeTo(null);
 		
 		frame.addComponentListener(new ComponentAdapter() {
+			
+			@Override
 			public void componentResized(ComponentEvent e) {
 				panel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
 				panel.revalidate();
@@ -88,7 +95,8 @@ public class GUI{
 		
 		frame.setJMenuBar(menuBar);
 
-		menuItemLoad.addActionListener(new LoadMenu(fc, frame, this));
+		menuItemLoad.addActionListener(new LoadMenu(fcLoad, frame, this));
+		menuItemSave.addActionListener(new SaveMenu(fcSave, frame, this));
 	}
 
 	public void addPanel() {

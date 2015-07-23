@@ -21,7 +21,7 @@ public final class VisitAST {
 		return nodeList;
 	}
 	
-	private static ASTForm getRootNode( ASTNode node ) {
+	public static ASTForm getRootNode( ASTNode node ) {
 		ASTNode tempNode = node;
 		
 		while (tempNode.getParent() != null) {

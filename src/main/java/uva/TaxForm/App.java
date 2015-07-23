@@ -7,6 +7,7 @@ import java.net.URL;
 import uva.TaxForm.AST.ASTForm;
 import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.Visitors.ASTVisitorToGUI;
+import uva.TaxForm.Visitors.ASTVisitorToJSON;
 
 public class App {
 	
@@ -45,6 +46,9 @@ public class App {
 		//Visit AST and build GUI
 		ASTVisitorToGUI astVisitor = new ASTVisitorToGUI(gui);
 		astVisitor.visit(root);
+		
+		ASTVisitorToJSON astToJSON = new ASTVisitorToJSON(root);
+		astToJSON.visit();
 	}
 
 }

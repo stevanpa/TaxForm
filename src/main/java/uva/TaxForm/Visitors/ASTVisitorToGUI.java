@@ -98,6 +98,8 @@ public class ASTVisitorToGUI {
 			try {
 				final JCheckBox checkBox = (JCheckBox) c;
 				checkBox.addActionListener( new ActionListener() {
+					
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						if (checkBox.isSelected()) {
 							enablePanel( panel, true);
