@@ -21,6 +21,7 @@ import uva.TaxForm.AST.ASTQuestion;
 import uva.TaxForm.AST.ASTVariable;
 import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.GUI.GUIQuestion;
+import uva.TaxForm.GUI.Fields.IntTextField;
 import uva.TaxForm.GUI.Fields.MoneyTextField;
 
 public class ASTVisitorToGUI {
@@ -113,6 +114,29 @@ public class ASTVisitorToGUI {
 					}
 				});
 			} catch (ClassCastException e) {}
+			
+			// IntTextField -- want to move this method to a separate class in DocumentFilters
+			try {
+				final IntTextField textField = (IntTextField) c;
+				textField.getDocument().addDocumentListener( new DocumentListener() {
+					
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						if (Integer.parseInt(textField.getText()) > 0) {
+							enablePanel( panel, true);
+						} else {
+							enablePanel( panel, false);
+							resetPanel(panel);
+						}
+					}
+
+					@Override
+					public void changedUpdate(DocumentEvent arg0) {}
+
+					@Override
+					public void removeUpdate(DocumentEvent arg0) {}
+				});
+			} catch (ClassCastException e) {}
 		}
 		// Evaluate expression field
 		// TODO - Add actionListener to evaluate the condition of (TF1 > TF2) or (!TF1)
@@ -193,7 +217,10 @@ public class ASTVisitorToGUI {
 		if (questionNode.getExpression().getExpressionType() == ASTExpression.EXP) {
 			// If it's a calculated question we should add some triggers to update the field
 			visitQuestionExpression(questionNode.getExpression());
-		}
+		}/* else if (questionNode.getExpression().getExpressionType() == ASTExpression.SINGLE_EXP) {
+			// If it's a calculated question we should add some triggers to update the field
+			visitExpression(questionNode.getExpression(), this.gui.panel);
+		}*/
 		
 		return question;
 	}
