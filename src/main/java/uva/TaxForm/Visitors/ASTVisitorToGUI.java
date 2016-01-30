@@ -10,6 +10,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import uva.TaxForm.AST.ASTBlock;
 import uva.TaxForm.AST.ASTExpression;
@@ -19,6 +21,7 @@ import uva.TaxForm.AST.ASTQuestion;
 import uva.TaxForm.AST.ASTVariable;
 import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.GUI.GUIQuestion;
+import uva.TaxForm.GUI.Fields.MoneyTextField;
 
 public class ASTVisitorToGUI {
 
@@ -76,13 +79,13 @@ public class ASTVisitorToGUI {
 		}
 		
 		if (exp != null) {
-			visitExpresion(exp, panel);
+			visitExpression(exp, panel);
 		}
 		
 		return panel;
 	}
 	
-	private void visitExpresion(ASTExpression exp, final JPanel panel) {
+	private void visitExpression(ASTExpression exp, final JPanel panel) {
 		// Single expression field
 		// Add actionListener to evaluate single condition (TF1)
 		if (exp.getExpressionType() == ASTExpression.SINGLE_EXP) {
@@ -110,10 +113,6 @@ public class ASTVisitorToGUI {
 					}
 				});
 			} catch (ClassCastException e) {}
-			
-			// TextField
-			// TODO - Add actionListener to one TextField e.g. show hide a part of the form if a condition is met
-			
 		}
 		// Evaluate expression field
 		// TODO - Add actionListener to evaluate the condition of (TF1 > TF2) or (!TF1)
@@ -156,6 +155,7 @@ public class ASTVisitorToGUI {
 		Component[] comps = container.getComponents();
 		
 		for (int i=0; i<comps.length && !abort; i++) {
+			//System.out.println(comps[i].getName());
 			if (name.equals(comps[i].getName())) {
 				returnComp = comps[i];
 				abort = true;

@@ -21,6 +21,11 @@ form taxOfficeExample {
 				(sellingPrice - privateDebt)
 	}
 	
+	if (age) {
+		"Do you see yourself as being old?"
+			old: boolean
+	}
+	
 	"Did you steal in 2010?"
 		hasStolen: boolean
 		
