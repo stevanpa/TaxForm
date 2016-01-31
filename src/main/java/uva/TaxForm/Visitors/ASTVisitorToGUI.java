@@ -1,18 +1,10 @@
 package uva.TaxForm.Visitors;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import uva.TaxForm.AST.ASTBlock;
 import uva.TaxForm.AST.ASTExpression;
 import uva.TaxForm.AST.ASTIfStatement;
@@ -23,6 +15,10 @@ import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.GUI.GUIQuestion;
 import uva.TaxForm.GUI.Fields.IntTextField;
 import uva.TaxForm.GUI.Fields.MoneyTextField;
+import uva.TaxForm.GUI.Fields.ActionListeners.AbstractActionListener;
+import uva.TaxForm.GUI.Fields.ActionListeners.JCheckBoxActionListener;
+import uva.TaxForm.GUI.Fields.DocumentListeners.IntTextFieldDocumentListener;
+import uva.TaxForm.GUI.Fields.DocumentListeners.MoneyTextFieldDocumentListener;
 
 public class ASTVisitorToGUI {
 
@@ -87,59 +83,41 @@ public class ASTVisitorToGUI {
 	}
 	
 	private void visitExpression(ASTExpression exp, final JPanel panel) {
-		// Single expression field
+		// Single expression fields
 		// Add actionListener to evaluate single condition (TF1)
 		if (exp.getExpressionType() == ASTExpression.SINGLE_EXP) {
 			ASTVariable var = (ASTVariable) exp.getLeftNode();
 			
 			if (var.getValue().isEmpty()) {
-				enablePanel(panel, false);
+				AbstractActionListener.enablePanel(panel, false);
 			}
 			
-			Component c = getComponentByName(this.gui.frame, var.getName());
+			Component c = ASTVisitorToGUIUtils.getComponentByName(this.gui.frame, var.getName());
 			
 			// CheckBox
 			try {
 				final JCheckBox checkBox = (JCheckBox) c;
-				checkBox.addActionListener( new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (checkBox.isSelected()) {
-							enablePanel( panel, true);
-						} else {
-							enablePanel( panel, false);
-							resetPanel(panel);
-						}
-					}
-				});
+				checkBox.addActionListener( 
+						new JCheckBoxActionListener(checkBox, panel) );
 			} catch (ClassCastException e) {}
 			
-			// IntTextField -- want to move this method to a separate class in DocumentFilters
+			// IntTextField
 			try {
 				final IntTextField textField = (IntTextField) c;
-				textField.getDocument().addDocumentListener( new DocumentListener() {
-					
-					@Override
-					public void insertUpdate(DocumentEvent e) {
-						if (Integer.parseInt(textField.getText()) > 0) {
-							enablePanel( panel, true);
-						} else {
-							enablePanel( panel, false);
-							resetPanel(panel);
-						}
-					}
-
-					@Override
-					public void changedUpdate(DocumentEvent arg0) {}
-
-					@Override
-					public void removeUpdate(DocumentEvent arg0) {}
-				});
+				textField.getDocument().addDocumentListener( 
+						new IntTextFieldDocumentListener(textField, panel) );
 			} catch (ClassCastException e) {}
+			
+			// MoneyTextField
+			try {
+				final MoneyTextField textField = (MoneyTextField) c;
+				textField.getDocument().addDocumentListener( 
+						new MoneyTextFieldDocumentListener(textField, panel) );
+			} catch (ClassCastException e) {}
+			
 		}
 		// Evaluate expression field
-		// TODO - Add actionListener to evaluate the condition of (TF1 > TF2) or (!TF1)
+		// TODO - Add actionListener/documentListener to evaluate the condition of (TF1 > TF2) or (!TF1)
 		else if (exp.getExpressionType() == ASTExpression.EXP) {
 			//ASTVariable leftVar = (ASTVariable) exp.getLeftNode();
 			
@@ -147,60 +125,6 @@ public class ASTVisitorToGUI {
 			
 		}
 		else {
-		}
-		
-	}
-	
-	private void resetPanel( Container container ) {
-		Component[] components = container.getComponents();
-		for (Component c : components) {
-			if (c instanceof Container) {
-				resetPanel( (Container) c );
-			}
-			
-			// CheckBox
-			try {
-				JCheckBox checkBox = (JCheckBox) c;
-				checkBox.setSelected(false);
-			} catch (ClassCastException e) {}
-			
-			// TextField
-			// TODO - Reset different types of TextFields e.g. money/string
-			try {
-				JTextField textField = (JTextField) c;
-				textField.setText("0.00");
-			} catch (ClassCastException e) {}
-		}
-	}
-	
-	private Component getComponentByName(Container container, String name) {
-		Component returnComp = null;
-		boolean abort = false;
-		Component[] comps = container.getComponents();
-		
-		for (int i=0; i<comps.length && !abort; i++) {
-			//System.out.println(comps[i].getName());
-			if (name.equals(comps[i].getName())) {
-				returnComp = comps[i];
-				abort = true;
-			} else {
-				Container cont = (Container) comps[i];
-				returnComp = getComponentByName(cont, name);
-				if (returnComp != null) {
-					abort = true;
-				}
-			}
-		}
-		return returnComp;
-	}
-	
-	private void enablePanel( Container container, boolean enable ) {
-		Component[] components = container.getComponents();
-		for (Component c : components) {
-			c.setEnabled(enable);
-			if (c instanceof Container) {
-				enablePanel( (Container) c, enable );
-			}
 		}
 	}
 	
@@ -230,7 +154,7 @@ public class ASTVisitorToGUI {
 		// Calculated expression field
 		// TODO - Add actionListener to Multiple TextField e.g. TF3 = TF1 - TF2
 		ASTVariable resultVar = (ASTVariable) exp.getLeftNode();
-		Component leftNode = getComponentByName(this.gui.frame, resultVar.getName());
+		Component leftNode = ASTVisitorToGUIUtils.getComponentByName(this.gui.frame, resultVar.getName());
 		Component rightNode = null;
 		
 		if (exp.getRightNode().getNodeType() == ASTNode.EXPRESSION) {
