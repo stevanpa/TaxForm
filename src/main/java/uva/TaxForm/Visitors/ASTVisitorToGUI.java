@@ -113,18 +113,9 @@ public class ASTVisitorToGUI {
 				final MoneyTextField textField = (MoneyTextField) c;
 				textField.getDocument().addDocumentListener( 
 						new MoneyTextFieldDocumentListener(textField, panel) );
+				//System.out.println(" " + textField.getName());
 			} catch (ClassCastException e) {}
 			
-		}
-		// Evaluate expression field
-		// TODO - Add actionListener/documentListener to evaluate the condition of (TF1 > TF2) or (!TF1)
-		else if (exp.getExpressionType() == ASTExpression.EXP) {
-			//ASTVariable leftVar = (ASTVariable) exp.getLeftNode();
-			
-			//Component leftComponent = getComponentByName(this.gui.frame, leftVar.getName());
-			
-		}
-		else {
 		}
 	}
 	
@@ -138,17 +129,29 @@ public class ASTVisitorToGUI {
 		final GUIQuestion question = new GUIQuestion(label, var);
 		question.setPreferredSize(new Dimension(this.gui.panel.getWidth()-30, 20));
 		
-		if (questionNode.getExpression().getExpressionType() == ASTExpression.EXP) {
-			// If it's a calculated question we should add some triggers to update the field
-			visitQuestionExpression(questionNode.getExpression());
-		}/* else if (questionNode.getExpression().getExpressionType() == ASTExpression.SINGLE_EXP) {
-			// If it's a calculated question we should add some triggers to update the field
+		/* Question can be of the following types of Expressions
+		 * ASSIGN_EXP or SINGLE_EXP
+		 * Every other Expression type is part of an other parent Expression
+		 */
+		// Non calculated variable
+		if (questionNode.getExpression().getExpressionType() == ASTExpression.SINGLE_EXP) {
+			//System.out.println("hmmm... SINGLE_EXP");
+			// TODO: Not sure if this method is still of some use...?
+			//visitQuestionExpression(questionNode.getExpression());
+		}
+		// Calculated variable
+		else if (questionNode.getExpression().getExpressionType() == ASTExpression.ASSIGN_EXP) {
+			questionNode.setComputed(true);
 			visitExpression(questionNode.getExpression(), this.gui.panel);
-		}*/
+			/*System.out.println(questionNode.getLabel());
+			System.out.println(questionNode.getNodeType());
+			System.out.println(questionNode.getExpression().getExpressionType());*/
+		}
 		
 		return question;
 	}
 	
+	/*
 	private void visitQuestionExpression(ASTExpression exp) {
 		
 		// Calculated expression field
@@ -157,15 +160,16 @@ public class ASTVisitorToGUI {
 		Component leftNode = ASTVisitorToGUIUtils.getComponentByName(this.gui.frame, resultVar.getName());
 		Component rightNode = null;
 		
+		//System.out.println(leftNode.getName());
+		
 		if (exp.getRightNode().getNodeType() == ASTNode.EXPRESSION) {
 			
 		} 
 		else {
 			
 		}
-		
-		
 	}
+	*/
 	
 	public JPanel addContainerPanel() {
 

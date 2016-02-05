@@ -81,6 +81,7 @@ public class VisitorToAST extends TaxFormBaseVisitor<Object> {
 		if (ctx.ASSIGN() != null) {
 			//expression.setExpressionType(ASTExpression.EXP);
 			expression.setExpressionType(ASTExpression.ASSIGN_EXP);
+			//question.setComputed(true);
 			//System.out.println(ctx.expression().size());
 			for (int i=0; i<ctx.expression().size(); i++) {
 				//System.out.println(ctx.expression(i).getText());
