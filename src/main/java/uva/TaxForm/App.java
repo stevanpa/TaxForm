@@ -3,6 +3,7 @@ package uva.TaxForm;
 import uva.TaxForm.AST.ASTForm;
 import uva.TaxForm.GUI.GUI;
 import uva.TaxForm.Visitors.ASTVisitorToGUI;
+import uva.TaxForm.Visitors.ASTVisitorToGUIListeners;
 
 public class App {
 	
@@ -33,6 +34,10 @@ public class App {
 		gui = new GUI(root);
 		ASTVisitorToGUI astToGUI = new ASTVisitorToGUI(gui);
 		astToGUI.visit(root);
+		
+		// Add Action/DocumentListeners to update computed fields.
+		ASTVisitorToGUIListeners astToGUIListeners = new ASTVisitorToGUIListeners(gui);
+		astToGUIListeners.visit(root);
 	}
 
 }
